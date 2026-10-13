@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carpintería Básica: Curso de 8 Horas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+  :root{
+    --madera:#6b4423; --madera-clara:#a0714a; --madera-suave:#c99a6b;
+    --crema:#f5efe6; --panel:#fffaf2; --borde:#e3d5c1;
+    --texto:#2c1e12; --gris:#7d6f5f;
+    --verde:#4c8c3c; --rojo:#c0392b; --azul:#1e6fa8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--crema);color:var(--texto);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;overscroll-behavior:none;}
+  #splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--madera);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:24px;text-align:center;transition:opacity .5s;}
+  #splash.hide{opacity:0;pointer-events:none;}
+  .splash-icon{font-size:72px;margin-bottom:16px;animation:serrucho 1.2s ease-in-out infinite alternate;}
+  @keyframes serrucho{from{transform:rotate(-10deg);}to{transform:rotate(10deg);}}
+  .splash-title{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:.5px;text-transform:uppercase;line-height:1.2;margin-bottom:8px;}
+  .splash-sub{color:var(--madera-suave);font-size:13px;margin-bottom:32px;}
+  .splash-badge{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:36px;}
+  .badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 14px;font-size:12px;color:#fff;font-weight:500;}
+  .btn-start{touch-action:manipulation;-webkit-appearance:none;background:linear-gradient(135deg,var(--madera-suave),#e0b98a);color:var(--texto);border:none;padding:16px 40px;border-radius:4px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+  .btn-start:active{transform:scale(.97);}
+  #app{display:none;min-height:100vh;}
+  #app.visible{display:block;}
+  .app-header{position:sticky;top:0;z-index:100;background:var(--panel);border-bottom:2px solid var(--madera);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+  .header-logo{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:var(--madera);text-transform:uppercase;letter-spacing:1px;}
+  .header-actions{display:flex;align-items:center;gap:10px;}
+  .icon-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--madera);}
+  .header-progress{font-size:12px;color:var(--gris);display:flex;align-items:center;gap:8px;}
+  .progress-bar{width:70px;height:4px;background:var(--borde);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--madera),var(--madera-suave));border-radius:2px;transition:width .4s ease;}
+  .nav-modulos{display:flex;overflow-x:auto;gap:8px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--borde);scrollbar-width:none;}
+  .nav-modulos::-webkit-scrollbar{display:none;}
+  .nav-mod-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--borde);background:transparent;color:var(--gris);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;}
+  .nav-mod-btn.active{background:var(--madera);border-color:var(--madera);color:#fff;font-weight:700;}
+  .nav-mod-btn.done{border-color:var(--verde);color:var(--verde);}
+  .content-area{padding:0 0 80px;}
+  .modulo{display:none;}
+  .modulo.active{display:block;}
+  .mod-hero{background:linear-gradient(135deg,var(--madera) 60%,var(--madera-clara));padding:24px 16px 20px;color:#fff;}
+  .mod-num{font-size:11px;font-weight:600;color:var(--madera-suave);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+  .mod-time{background:rgba(255,255,255,.18);padding:3px 10px;border-radius:12px;font-size:11px;color:#fff;letter-spacing:0;}
+  .mod-title{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;line-height:1.15;margin-bottom:10px;}
+  .mod-desc{font-size:13px;color:#f0e6d8;}
+  .mod-body{padding:18px 16px;}
+  .card{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .card h3{font-family:'Oswald',sans-serif;font-size:16px;color:var(--madera);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .card-time{font-size:11px;color:var(--gris);font-weight:500;background:var(--crema);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+  .card p, .card li{font-size:14px;color:var(--texto);}
+  .card p{margin-bottom:8px;}
+  .card p:last-child{margin-bottom:0;}
+  .card ul, .card ol{padding-left:18px;margin-top:6px;}
+  .card li{margin-bottom:6px;}
+  .subh{font-size:13px;font-weight:700;color:var(--madera-clara);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px;}
+  .tip{background:#fff3e0;border-left:4px solid var(--madera-suave);padding:10px 12px;border-radius:6px;font-size:13px;margin-top:10px;}
+  .warn{background:#fdecea;border-left:4px solid var(--rojo);padding:10px 12px;border-radius:6px;font-size:13px;margin-top:10px;}
+  .paso{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+  .paso-num{flex-shrink:0;width:24px;height:24px;background:var(--madera);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .paso-text{font-size:14px;}
+  .tabla{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px;}
+  .tabla th, .tabla td{border:1px solid var(--borde);padding:6px 8px;text-align:left;}
+  .tabla th{background:#fff3e0;color:var(--madera);}
+  .checklist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde);font-size:14px;cursor:pointer;}
+  .checklist-item.checked{color:var(--verde);text-decoration:line-through;opacity:.7;}
+  .check-box{width:18px;height:18px;border:2px solid var(--madera-suave);border-radius:4px;flex-shrink:0;}
+  .checklist-item.checked .check-box{background:var(--verde);border-color:var(--verde);}
+  .quiz-wrap{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:12px;}
+  .quiz-pregunta{font-size:14px;font-weight:600;margin-bottom:10px;}
+  .quiz-opciones{display:flex;flex-direction:column;gap:8px;}
+  .quiz-opt{background:var(--crema);border:1px solid var(--borde);border-radius:8px;padding:10px 12px;text-align:left;font-size:13px;color:var(--texto);cursor:pointer;}
+  .quiz-opt:active{transform:scale(.98);}
+  .quiz-opt.correcta{background:rgba(76,140,60,.15);border-color:var(--verde);color:var(--verde);}
+  .quiz-opt.incorrecta{background:rgba(192,57,43,.1);border-color:var(--rojo);color:var(--rojo);}
+  .quiz-feedback{display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:rgba(76,140,60,.15);color:var(--verde);border:1px solid var(--verde);}
+  .quiz-feedback.fail{background:rgba(192,57,43,.1);color:var(--rojo);border:1px solid var(--rojo);}
+  .calc-box{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .calc-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+  .calc-row label{font-size:12px;color:var(--gris);flex:1;}
+  .calc-row input{flex:1;padding:8px;border:1px solid var(--borde);border-radius:6px;font-size:14px;}
+  .calc-btn{background:var(--madera);color:#fff;border:none;padding:10px 16px;border-radius:6px;font-weight:600;cursor:pointer;width:100%;font-size:14px;}
+  .calc-result{margin-top:10px;padding:10px;background:var(--crema);border-radius:8px;font-size:14px;font-weight:600;color:var(--madera);text-align:center;}
+  .fav-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--madera);}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--madera);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.show{opacity:1;}
+  .search-bar{display:none;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--borde);}
+  .search-bar.show{display:flex;gap:8px;}
+  .search-bar input{flex:1;padding:8px 10px;border:1px solid var(--borde);border-radius:6px;font-size:14px;}
+  .note-item{background:var(--crema);border-radius:8px;padding:10px;margin-bottom:8px;font-size:13px;position:relative;}
+  .note-del{position:absolute;right:8px;top:8px;background:none;border:none;color:var(--rojo);cursor:pointer;}
+  textarea{width:100%;padding:10px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;margin-bottom:8px;}
+  .schedule{background:var(--panel);border:1px solid var(--borde);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+  .sched-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--borde);font-size:13px;}
+  .sched-row:last-child{border-bottom:none;}
+  .sched-time{flex-shrink:0;width:56px;font-weight:700;color:var(--madera);font-size:12px;}
+  .sched-title{flex:1;}
+  .sched-total{background:var(--madera);color:#fff;text-align:center;padding:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<noscript><style>#splash{display:none!important}#app{display:block!important}.modulo{display:block!important}</style><div style="position:relative;z-index:99999;background:#c0392b;color:#fff;padding:14px;font:600 14px/1.4 sans-serif;text-align:center">JavaScript está desactivado. Esta vista previa (Archivos, WhatsApp, Correo) no permite botones: abre el enlace en Safari para usar el curso completo.</div></noscript>
+
+<div id="splash">
+  <div class="splash-icon">🪚</div>
+  <div class="splash-title">Carpintería Básica<br>Curso de 8 Horas</div>
+  <div class="splash-sub">De cero a tu primer proyecto en madera</div>
+  <div class="splash-badge">
+    <span class="badge">8 Módulos · 8 Horas</span>
+    <span class="badge">Quizzes</span>
+    <span class="badge">Proyecto Final: Repisa</span>
+  </div>
+  <button class="btn-start" onclick="iniciarCurso()">Comenzar Curso</button>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <div class="header-logo">🪵 Carp. Básica</div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="toggleBusqueda()">🔎</button>
+      <button class="icon-btn" onclick="mostrarLogros()">🏆</button>
+      <button class="icon-btn" onclick="if(typeof CertificadoModule!=='undefined'){CertificadoModule.generar('basico')}else{alert('El certificado no está disponible en este archivo')}" title="Generar certificado">🎓</button>
+      <div class="header-progress">
+        <span id="progress-text">0%</span>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar" id="search-bar">
+    <input type="text" id="search-input" placeholder="Buscar en el curso...">
+    <button class="icon-btn" onclick="limpiarBusqueda()">✕</button>
+  </div>
+
+  <div class="nav-modulos">
+    <button class="nav-mod-btn active" onclick="irModulo(0)">Inicio</button>
+    <button class="nav-mod-btn" onclick="irModulo(1)">1. Seguridad</button>
+    <button class="nav-mod-btn" onclick="irModulo(2)">2. Maderas</button>
+    <button class="nav-mod-btn" onclick="irModulo(3)">3. Herramientas</button>
+    <button class="nav-mod-btn" onclick="irModulo(4)">4. Medición/Planos</button>
+    <button class="nav-mod-btn" onclick="irModulo(5)">5. Cortes</button>
+    <button class="nav-mod-btn" onclick="irModulo(6)">6. Uniones</button>
+    <button class="nav-mod-btn" onclick="irModulo(7)">7. Proyecto</button>
+    <button class="nav-mod-btn" onclick="irModulo(8)">8. Acabado</button>
+    <button class="nav-mod-btn" onclick="irVista('notas')">📝 Notas</button>
+  </div>
+
+  <div class="content-area">
+
+    <!-- INICIO -->
+    <div id="sec-indice" class="modulo active">
+      <div class="mod-hero">
+        <div class="mod-num">Bienvenida</div>
+        <div class="mod-title">Tu camino en la <span style="color:#fff8ec">carpintería</span> empieza aquí</div>
+        <div class="mod-desc">Curso de 8 horas basado en la estructura de talleres presenciales reales de carpintería básica: seguridad, materiales, herramientas, medición, corte, unión, un proyecto práctico completo y acabado final.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Horario del curso (8 horas)</h3>
+          <div class="schedule">
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">1. Seguridad y Organización del Taller</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">2. Tipos y Selección de Madera</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">3. Herramientas Manuales y Eléctricas</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">4. Medición, Trazado y Lectura de Planos</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">5. Técnicas de Corte</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">6. Uniones y Fijación</div></div>
+            <div class="sched-row"><div class="sched-time">120 min</div><div class="sched-title">7. Proyecto Práctico: Repisa de Pared</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">8. Lijado, Acabado y Resolución de Problemas</div></div>
+            <div class="sched-total">TOTAL: 8 HORAS</div>
+          </div>
+          <p style="margin-top:10px;font-size:13px;color:var(--gris);">Cada módulo indica el tiempo estimado por sección (⏱). Tómate ese tiempo para leer con calma, repasar los ejemplos y responder el quiz antes de avanzar: así el recorrido completo equivale a una jornada real de taller de 8 horas.</p>
+        </div>
+        <div class="card">
+          <h3>¿Qué vas a lograr?</h3>
+          <ul>
+            <li>Trabajar con seguridad en un taller de carpintería.</li>
+            <li>Elegir la madera correcta según tu proyecto y presupuesto.</li>
+            <li>Usar con confianza herramientas manuales y eléctricas básicas.</li>
+            <li>Leer un plano simple y hacer tu propia lista de corte.</li>
+            <li>Cortar con precisión usando serrucho, sierra de banco e ingletadora.</li>
+            <li>Unir piezas con clavos, tornillos y adhesivos correctamente.</li>
+            <li>Construir tu primer proyecto real: una repisa de pared.</li>
+            <li>Lijar y aplicar un acabado protector de calidad.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Por qué empezar con una repisa</h3>
+          <p>La mayoría de los muebles son, en esencia, variaciones de una caja: cajones, closets, cocinas y credenzas parten del mismo principio. Una repisa de pared te enseña a medir, cortar, ensamblar y acabar en un solo proyecto pequeño, dejándote listo para proyectos más grandes.</p>
+        </div>
+        <div class="card">
+          <h3>Cómo usar este curso</h3>
+          <p>Recorre los módulos en orden con el menú superior. Cada módulo tiene lecciones cortas y un quiz al final. Tu progreso, notas y respuestas se guardan automáticamente en este dispositivo. Usa el botón ⭐ para marcar contenido que quieras repasar y la sección de Notas para anotar tus propias medidas o ideas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULO 1: SEGURIDAD -->
+    <div id="modulo-1" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 1 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Seguridad y <span style="color:#fff8ec">Organización del Taller</span></div>
+        <div class="mod-desc">Antes de tocar una herramienta, protege tu cuerpo y organiza tu espacio de trabajo.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Equipo de protección personal <span class="card-time">10 min</span></h3>
+          <p>El equipo de protección personal (EPP) es tu primera línea de defensa contra lesiones. No es opcional ni "para cuando se vea peligroso": debe usarse desde el primer corte.</p>
+          <ul>
+            <li><strong>Gafas de seguridad:</strong> obligatorias al cortar, lijar o taladrar. Protegen contra virutas y polvo que salen despedidos a gran velocidad, incluso con herramientas manuales.</li>
+            <li><strong>Protección auditiva:</strong> tapones o orejeras con herramientas eléctricas o ruido prolongado. La exposición repetida sin protección causa daño auditivo acumulativo e irreversible.</li>
+            <li><strong>Mascarilla contra polvo:</strong> al lijar, especialmente maderas tratadas o MDF, cuyo polvo fino es más dañino que el de madera maciza.</li>
+            <li><strong>Ropa ajustada, sin mangas sueltas ni joyas:</strong> evita enganches en partes móviles como brocas, discos o bandas.</li>
+            <li><strong>Calzado cerrado y de suela firme:</strong> protege de caídas de herramientas, tablas o clavos en el piso.</li>
+            <li><strong>Cabello recogido:</strong> si trabajas cerca de herramientas rotativas, el cabello suelto es un riesgo real de enganche.</li>
+          </ul>
+          <div class="warn">⚠️ Nunca trabajes cansado, apurado o distraído. La mayoría de accidentes ocurren por prisa, no por falta de experiencia. Si sientes que estás forzando el ritmo, detente unos minutos.</div>
+        </div>
+        <div class="card">
+          <h3>Organización del taller <span class="card-time">12 min</span></h3>
+          <p>Un taller desordenado no solo es incómodo: es peligroso. Cada minuto que pasas buscando una herramienta es un minuto de distracción, y cada viruta en el piso es un posible resbalón.</p>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Zonifica el espacio: área de corte, área de ensamble y área de acabado separadas, para que el polvo de una no contamine el trabajo de otra.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Mantén los pasillos libres de cables y virutas; usa organizadores de cable o pasacables elevados.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Guarda herramientas cortantes con su filo protegido, siempre en el mismo lugar, idealmente en un panel visible (pegboard).</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Ten un extintor tipo ABC y un botiquín básico visibles y accesibles, nunca bloqueados por material.</div></div>
+          <div class="paso"><div class="paso-num">5</div><div class="paso-text">Limpia al final de cada sesión, no solo al final del proyecto: un taller que se limpia a diario se mantiene seguro.</div></div>
+        </div>
+        <div class="card">
+          <h3>Instalación eléctrica y extensiones <span class="card-time">8 min</span></h3>
+          <p>Muchas herramientas eléctricas de taller requieren buena alimentación eléctrica. Usa extensiones de calibre adecuado a la potencia de la herramienta (las extensiones muy delgadas se calientan y pierden potencia). Si tu instalación no cuenta con protección diferencial (GFCI/interruptor de falla a tierra), considera instalar un tomacorriente portátil con esa protección, especialmente si trabajas en un espacio húmedo como un garaje.</p>
+        </div>
+        <div class="card">
+          <h3>Ventilación y polvo de madera <span class="card-time">8 min</span></h3>
+          <p>El polvo de madera acumulado en el aire no solo es incómodo: en concentraciones altas y con exposición prolongada puede afectar las vías respiratorias, y algunas maderas (como el cedro o el nogal) pueden causar reacciones alérgicas en personas sensibles. Trabaja en espacios ventilados, usa un extractor o abre ventanas cruzadas para generar corriente de aire, y considera un colector de polvo o aspiradora conectada a tus herramientas si trabajas con frecuencia.</p>
+        </div>
+        <div class="card">
+          <h3>Ergonomía y postura <span class="card-time">7 min</span></h3>
+          <p>La carpintería es un trabajo físico. Ajusta la altura de tu mesa de trabajo a la altura de tu cadera para evitar encorvarte al cortar o lijar. Al levantar tablas o tableros pesados, flexiona las rodillas y mantén la espalda recta. Alterna posturas y tareas cada 30-40 minutos para evitar fatiga acumulada, sobre todo en tareas repetitivas como el lijado.</p>
+        </div>
+        <div class="card">
+          <h3>Primeros auxilios básicos en el taller <span class="card-time">8 min</span></h3>
+          <p>Ante un corte, aplica presión directa con un paño limpio y eleva la extremidad por encima del corazón para reducir el sangrado. Ante astillas profundas, cortes que no dejan de sangrar, o lesiones en los ojos, busca atención médica de inmediato, no intentes resolverlo tú mismo. Ten siempre a mano un botiquín con gasas, cinta adhesiva, desinfectante y guantes desechables.</p>
+        </div>
+        <div class="card">
+          <h3>Reglas de oro antes de empezar <span class="card-time">7 min</span></h3>
+          <ul>
+            <li>Desconecta las herramientas eléctricas antes de cambiar accesorios (brocas, hojas, discos).</li>
+            <li>Nunca retires un protector o guarda de seguridad de una máquina.</li>
+            <li>Si algo se siente "raro" (vibración, olor, ruido extraño), detente y revisa antes de continuar.</li>
+            <li>Trabaja siempre con buena iluminación; las sombras ocultan líneas de corte y bordes filosos.</li>
+            <li>No trabajes solo si vas a usar maquinaria pesada por primera vez; ten a alguien cerca por si necesitas ayuda.</li>
+          </ul>
+          <div class="tip">💡 Un taller ordenado no solo es más seguro: también te hace más rápido y preciso, porque reduces el tiempo perdido buscando herramientas o material.</div>
+        </div>
+        <div class="card">
+          <h3>Checklist diario antes de encender máquinas <span class="card-time">5 min</span></h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Llevo puestas gafas de seguridad</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Protectores auditivos listos si usaré máquinas eléctricas</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Área de trabajo despejada de virutas y cables sueltos</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Protectores de las máquinas en su lugar</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Sé dónde está el botiquín y el extintor</div>
+          <div class="tip">💡 Repite este checklist mental cada vez que empieces una sesión de trabajo, no solo la primera vez.</div>
+        </div>
+        <div class="card">
+          <h3>Glosario de seguridad <span class="card-time">6 min</span></h3>
+          <ul>
+            <li><strong>Kickback (retroceso):</strong> cuando la pieza es lanzada bruscamente hacia atrás por el disco de una sierra, normalmente por atascamiento o mala guía. Es la causa de muchos accidentes graves en sierra de banco.</li>
+            <li><strong>EPP:</strong> Equipo de Protección Personal (gafas, protección auditiva, mascarilla, etc.).</li>
+            <li><strong>Guarda o protector:</strong> pieza de plástico o metal que cubre parcialmente un disco o cuchilla en movimiento.</li>
+            <li><strong>Punto de operación:</strong> el área exacta donde la herramienta hace contacto con el material; es la zona de mayor riesgo.</li>
+            <li><strong>GFCI/diferencial:</strong> dispositivo que corta la corriente ante una fuga eléctrica, protegiendo contra descargas.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Qué hacer ante una emergencia <span class="card-time">6 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Detén la máquina o suelta la herramienta de inmediato; no intentes "terminar el corte" ante una lesión.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Evalúa la gravedad: sangrado leve se controla con presión directa; sangrado abundante o pérdida de un fragmento requiere atención médica inmediata.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Si hay fuego pequeño (por ejemplo, en el motor de una herramienta), desconecta la corriente antes de usar el extintor.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Ten a la mano un número de contacto de emergencia y, si trabajas solo con frecuencia, avisa a alguien tu horario de taller.</div></div>
+          <div class="warn">⚠️ Ninguna pieza de trabajo vale una lesión. Ante la duda, detente y evalúa antes de continuar.</div>
+        </div>
+        <div id="quiz-m1"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 2: MADERAS -->
+    <div id="modulo-2" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 2 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Tipos y <span style="color:#fff8ec">Selección de Madera</span></div>
+        <div class="mod-desc">Conoce qué madera usar según el proyecto, el uso y el presupuesto.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Anatomía básica de la madera <span class="card-time">8 min</span></h3>
+          <p>Antes de elegir madera, entender su estructura te ayuda a trabajarla mejor. El tronco tiene una zona externa llamada <strong>albura</strong> (más clara, joven, por donde circula la savia) y una zona interna llamada <strong>duramen o corazón</strong> (más oscura y densa, generalmente más resistente y estable). La <strong>veta</strong> es el patrón que forman las fibras y los anillos de crecimiento anuales; entender su dirección es clave para cortar, lijar y encolar correctamente.</p>
+        </div>
+        <div class="card">
+          <h3>Maderas blandas (coníferas) <span class="card-time">10 min</span></h3>
+          <p>Provienen de árboles de hoja perenne (coníferas) como el pino, abeto y cedro. Son fáciles de cortar y clavar, más económicas, y por eso ideales para principiantes, estructuras internas y proyectos que luego se pintarán.</p>
+          <div class="subh">Pino</div>
+          <p>La madera blanda más común y económica. Se trabaja fácil con herramientas manuales, aunque tiende a tener más nudos que otras especies.</p>
+          <div class="subh">Cedro</div>
+          <p>Naturalmente resistente a la humedad y a insectos; buena opción para proyectos de exterior sin necesidad de tratamiento adicional.</p>
+        </div>
+        <div class="card">
+          <h3>Maderas duras (frondosas) <span class="card-time">10 min</span></h3>
+          <p>Provienen de árboles de hoja caduca como roble, nogal, cerezo y haya. Son más resistentes, densas y de mejor acabado visual, pero también más caras y más difíciles de cortar y taladrar. Ideales para muebles finos, superficies de trabajo y piezas que reciben mucho uso.</p>
+          <div class="tip">💡 Para principiantes, se recomienda practicar primero con madera blanda antes de invertir en madera dura, que perdona menos los errores.</div>
+        </div>
+        <div class="card">
+          <h3>Tableros derivados <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>Contrachapado (plywood/triplay):</strong> capas finas de madera encoladas en direcciones cruzadas, lo que lo hace resistente y estable, sin apenas expandirse o contraerse.</li>
+            <li><strong>MDF (fibra de densidad media):</strong> superficie lisa y uniforme, ideal para pintar, pero se hincha y daña con humedad; no recomendado para exteriores o baños.</li>
+            <li><strong>Aglomerado:</strong> partículas de madera prensadas, económico, usado en muebles enchapados o con melamina; menos resistente a la humedad y al peso que el contrachapado.</li>
+            <li><strong>OSB (tablero de virutas orientadas):</strong> resistente y económico, usado más en construcción que en muebles finos, con una textura visible poco decorativa.</li>
+          </ul>
+          <div class="tip">💡 Para tu primer proyecto, el pino y el contrachapado son la combinación más amigable: fáciles de cortar, económicos y perdonan pequeños errores de medición.</div>
+        </div>
+        <div class="card">
+          <h3>Defectos comunes a evitar <span class="card-time">7 min</span></h3>
+          <ul>
+            <li><strong>Nudos sueltos:</strong> pueden desprenderse y dejar un agujero; los nudos firmes y bien adheridos no son un problema estructural grave.</li>
+            <li><strong>Alabeo o torcedura:</strong> la tabla no está plana; revisa mirando a lo largo del canto antes de comprar.</li>
+            <li><strong>Grietas (rajaduras):</strong> especialmente en los extremos, debilitan la pieza y pueden crecer con el tiempo.</li>
+            <li><strong>Manchas de humedad o moho:</strong> señal de que la madera no se secó correctamente; puede seguir moviéndose o incluso pudrirse.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cómo comprar madera <span class="card-time">8 min</span></h3>
+          <ul>
+            <li>Revisa que las tablas no estén torcidas: mira a lo largo del canto, como si apuntaras con un rifle.</li>
+            <li>Evita piezas con grietas grandes, nudos sueltos o manchas de humedad.</li>
+            <li>Compra un 10-15% adicional para cubrir cortes defectuosos, errores de medición o piezas de repuesto.</li>
+            <li>Si es posible, selecciona tú mismo las tablas en el depósito en vez de pedirlas por teléfono.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Humedad y aclimatación de la madera <span class="card-time">7 min</span></h3>
+          <p>La madera "trabaja": se expande y contrae según el contenido de humedad del ambiente, incluso después de cortada. Por eso es importante dejarla aclimatarse en tu taller entre 48 y 72 horas antes de construir, apilada con separadores para que el aire circule por todas las caras. Evita instalar piezas de madera recién compradas directamente en exteriores húmedos sin dejarlas estabilizar primero.</p>
+        </div>
+        <div class="card">
+          <h3>Tabla comparativa de maderas comunes <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Madera</th><th>Dureza</th><th>Precio</th><th>Uso recomendado</th></tr>
+            <tr><td>Pino</td><td>Baja</td><td>$</td><td>Proyectos pintados, estructuras internas, práctica</td></tr>
+            <tr><td>Cedro</td><td>Baja-media</td><td>$$</td><td>Exteriores, closets (repele polillas)</td></tr>
+            <tr><td>Contrachapado (pino)</td><td>Media</td><td>$</td><td>Cajones, fondos, piezas grandes estables</td></tr>
+            <tr><td>Roble</td><td>Alta</td><td>$$$</td><td>Muebles finos, pisos, mesas de uso intenso</td></tr>
+            <tr><td>Nogal</td><td>Media-alta</td><td>$$$$</td><td>Muebles de autor, piezas decorativas</td></tr>
+            <tr><td>MDF</td><td>Media</td><td>$</td><td>Muebles pintados, molduras, interiores secos</td></tr>
+          </table>
+          <div class="tip">💡 Guarda esta tabla en tus Notas si te sirve de referencia rápida para tu próximo proyecto.</div>
+        </div>
+        <div class="card">
+          <h3>Madera certificada y sostenibilidad <span class="card-time">6 min</span></h3>
+          <p>Busca sellos como FSC (Forest Stewardship Council) al comprar madera, que certifican que proviene de bosques manejados de forma responsable. Además de la parte ambiental, la madera certificada suele tener mejor control de calidad y secado, lo que se traduce en menos sorpresas al trabajarla.</p>
+        </div>
+        <div class="card">
+          <h3>Glosario del maderero <span class="card-time">6 min</span></h3>
+          <ul>
+            <li><strong>Canto:</strong> el borde estrecho de una tabla (por oposición a la cara, que es la superficie ancha).</li>
+            <li><strong>Testa:</strong> el corte transversal en el extremo de una pieza, donde se ve la fibra "de frente".</li>
+            <li><strong>Veteado:</strong> el patrón visual que forma la fibra de la madera en la superficie.</li>
+            <li><strong>Secado al horno (kiln-dried):</strong> proceso industrial que reduce la humedad de la madera de forma controlada, más estable que el secado al aire.</li>
+            <li><strong>Pie tabla (board foot):</strong> unidad de volumen usada para vender madera, equivalente a una tabla de 12x12 pulgadas y 1 pulgada de grosor.</li>
+          </ul>
+        </div>
+        <div id="quiz-m2"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 3: HERRAMIENTAS -->
+    <div id="modulo-3" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 3 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Herramientas <span style="color:#fff8ec">Manuales y Eléctricas</span></div>
+        <div class="mod-desc">Las herramientas básicas que todo carpintero principiante necesita conocer.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <button class="fav-btn" onclick="toggleFavorito('m3c1')" id="fav-m3c1" style="float:right;">☆</button>
+          <h3>Herramientas manuales esenciales <span class="card-time">18 min</span></h3>
+          <ul>
+            <li><strong>Serrucho de mano:</strong> cortes rectos en madera blanda o dura. Sujétalo con firmeza pero sin apretar de más; deja que el peso y el ángulo de la hoja hagan el trabajo.</li>
+            <li><strong>Martillo de carpintero:</strong> clavar y desclavar (con la garra trasera). Sostenlo cerca del extremo del mango para mayor control y golpe con menos esfuerzo.</li>
+            <li><strong>Formón:</strong> rebajes y ajustes finos; siempre corta empujando lejos de tu cuerpo y con la mano libre detrás del filo.</li>
+            <li><strong>Escuadra y falsa escuadra:</strong> verificar ángulos de 90° (escuadra fija) y otros ángulos (falsa escuadra, ajustable).</li>
+            <li><strong>Metro/cinta métrica y lápiz de carpintero:</strong> medir y marcar; el lápiz de carpintero, de mina plana, no rueda y se afila fácil con un cutter.</li>
+            <li><strong>Prensas o sargentos:</strong> sujetan piezas mientras trabajas, liberando tus manos y evitando movimientos indeseados de la pieza.</li>
+            <li><strong>Destornilladores y llave allen/hexagonal:</strong> instalación de herrajes, bisagras y tornillería en general.</li>
+            <li><strong>Nivel de burbuja:</strong> indispensable para instalaciones como repisas o estantes en pared.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Herramientas eléctricas básicas <span class="card-time">16 min</span></h3>
+          <ul>
+            <li><strong>Taladro/atornillador inalámbrico:</strong> perforar y atornillar. La herramienta más usada en cualquier taller; busca uno con embrague ajustable para no pasar de rosca los tornillos.</li>
+            <li><strong>Sierra circular o caladora:</strong> cortes rectos (circular) o curvos (caladora) en tableros grandes que serían difíciles de mover a una sierra de banco.</li>
+            <li><strong>Lijadora orbital:</strong> acabado uniforme mucho más rápido que a mano, especialmente en superficies grandes.</li>
+            <li><strong>Sierra de banco (table saw):</strong> la máquina central de un taller para cortes rectos repetitivos y precisos; requiere más práctica y respeto por su potencial peligro.</li>
+            <li><strong>Ingletadora (miter saw):</strong> cortes angulares precisos y repetibles, ideal para marcos y molduras.</li>
+          </ul>
+          <div class="tip">💡 Si vas a comprar tu primera herramienta eléctrica, empieza por un taladro/atornillador de buena calidad: es la más versátil y la usarás en casi todos los proyectos.</div>
+        </div>
+        <div class="card">
+          <h3>Accesorios y consumibles <span class="card-time">10 min</span></h3>
+          <p>Además de las herramientas principales, necesitarás consumibles que se gastan con el uso:</p>
+          <ul>
+            <li><strong>Brocas:</strong> ten un juego variado de diámetros, y brocas específicas para avellanado si vas a ocultar cabezas de tornillo.</li>
+            <li><strong>Hojas de sierra:</strong> el número de dientes determina el acabado: menos dientes cortan más rápido pero más tosco; más dientes dan un corte más fino.</li>
+            <li><strong>Lijas:</strong> ten al menos tres granos (grueso, medio, fino) para cubrir todo el proceso de acabado.</li>
+            <li><strong>Cinta de pintor:</strong> útil para proteger superficies y reducir el astillado al cortar.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Mantenimiento básico de herramientas <span class="card-time">10 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Limpia el serrucho y quita la resina acumulada con un paño y solvente suave después de cada uso.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Revisa que los mangos de martillo y formón no estén rajados; un mango dañado puede fallar bajo esfuerzo.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Carga baterías de herramientas inalámbricas después de cada uso, sin dejarlas descargar por completo con frecuencia.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Guarda brocas y hojas de sierra en un lugar seco para evitar óxido, idealmente en su caja original.</div></div>
+          <div class="paso"><div class="paso-num">5</div><div class="paso-text">Aplica una gota de aceite en las partes móviles de herramientas manuales de vez en cuando (bisagras de prensas, por ejemplo).</div></div>
+        </div>
+        <div class="card">
+          <h3>Cómo elegir tus primeras herramientas <span class="card-time">6 min</span></h3>
+          <p>No necesitas comprar todo de una vez. Empieza con lo esencial para el proyecto que tienes en mente (en este curso: serrucho, escuadra, metro, prensa, taladro, lija) y ve ampliando tu colección proyecto a proyecto. Es mejor invertir en pocas herramientas de buena calidad que en muchas de baja calidad que fallan rápido o dan resultados imprecisos.</p>
+        </div>
+        <div class="card">
+          <h3>Kit inicial recomendado (presupuesto orientativo) <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Herramienta</th><th>Prioridad</th><th>Costo aprox.</th></tr>
+            <tr><td>Metro/cinta métrica</td><td>Esencial</td><td>$</td></tr>
+            <tr><td>Escuadra + falsa escuadra</td><td>Esencial</td><td>$</td></tr>
+            <tr><td>Serrucho de mano</td><td>Esencial</td><td>$</td></tr>
+            <tr><td>Taladro/atornillador inalámbrico</td><td>Esencial</td><td>$$</td></tr>
+            <tr><td>Prensas/sargentos (x2-4)</td><td>Esencial</td><td>$$</td></tr>
+            <tr><td>Lijadora orbital</td><td>Recomendado</td><td>$$</td></tr>
+            <tr><td>Sierra circular</td><td>Recomendado</td><td>$$$</td></tr>
+            <tr><td>Sierra de banco</td><td>Opcional (etapa 2)</td><td>$$$$</td></tr>
+          </table>
+          <p style="margin-top:8px;">No necesitas comprar todo antes de tu primer proyecto: con lo marcado "esencial" puedes completar la repisa del Módulo 7.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de lija según el grano <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Grano</th><th>Uso</th></tr>
+            <tr><td>40-60</td><td>Desbaste agresivo, quitar pintura vieja o mucho material</td></tr>
+            <tr><td>80-100</td><td>Nivelar superficies e imperfecciones</td></tr>
+            <tr><td>120-150</td><td>Suavizado intermedio</td></tr>
+            <tr><td>180-220</td><td>Acabado final antes de aplicar tinte o barniz</td></tr>
+            <tr><td>320+</td><td>Lijado ligero entre manos de acabado</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Cómo afilar un formón básico <span class="card-time">6 min</span></h3>
+          <p>Un formón desafilado es más peligroso que uno afilado, porque obliga a forzar el corte y aumenta el riesgo de resbalones. Con una piedra de afilar húmeda, desliza el bisel del formón en ángulo constante (normalmente 25-30°) con movimientos en forma de ocho, alternando de vez en cuando con la cara plana trasera para eliminar la rebaba formada.</p>
+        </div>
+        <div id="quiz-m3"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 4: MEDICION Y PLANOS -->
+    <div id="modulo-4" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 4 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Medición, Trazado <span style="color:#fff8ec">y Lectura de Planos</span></div>
+        <div class="mod-desc">"Mide dos veces, corta una vez": la regla de oro de la carpintería.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Cómo medir correctamente <span class="card-time">12 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Usa siempre el mismo extremo de la cinta como referencia (cero), sin cambiar de cinta a mitad de proyecto: cada cinta puede tener una pequeña diferencia de calibración.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Marca con una "V" o línea fina de lápiz, nunca un punto grueso que introduce error de varios milímetros.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Verifica la medida una segunda vez antes de cortar; si es un proyecto importante, mide una tercera vez.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Al medir piezas que deben ser idénticas, corta todas a partir de la misma marca de referencia en vez de medir cada una por separado.</div></div>
+        </div>
+        <div class="card">
+          <h3>Herramientas de trazado <span class="card-time">8 min</span></h3>
+          <p>Además de la escuadra, existen otras herramientas útiles para el trazado: el <strong>gramil</strong> marca líneas paralelas a un borde a una distancia constante (útil para marcar ranuras), y el <strong>compás</strong> traza círculos y arcos. Para el nivel básico, con escuadra, falsa escuadra y metro es suficiente para empezar.</p>
+        </div>
+        <div class="card">
+          <h3>Leer un plano simple <span class="card-time">16 min</span></h3>
+          <ul>
+            <li><strong>Vistas:</strong> planta (desde arriba), alzado (de frente) y perfil (de lado) muestran el mueble desde distintos ángulos para representarlo completamente en dos dimensiones.</li>
+            <li><strong>Cotas:</strong> medidas exactas de cada elemento, normalmente en mm o cm, indicadas con líneas y flechas junto a cada tramo del dibujo.</li>
+            <li><strong>Escala:</strong> relación entre el dibujo y el tamaño real (ej. 1:10 significa que 1cm en el plano equivale a 10cm reales).</li>
+          </ul>
+          <table class="tabla">
+            <tr><th>Pieza</th><th>Cant.</th><th>Largo</th><th>Ancho</th><th>Grosor</th></tr>
+            <tr><td>Tabla base</td><td>1</td><td>60cm</td><td>20cm</td><td>1.8cm</td></tr>
+            <tr><td>Soporte lateral</td><td>2</td><td>18cm</td><td>15cm</td><td>1.8cm</td></tr>
+          </table>
+          <div class="tip">💡 Esta es la lista de despiece que usaremos en el proyecto práctico del Módulo 7. Tómate un momento para entender cada columna antes de avanzar.</div>
+        </div>
+        <div class="card">
+          <h3>Convertir un boceto en lista de corte <span class="card-time">8 min</span></h3>
+          <p>Cuando tengas una idea propia, dibuja un boceto simple a mano con las medidas generales del mueble. Luego, descompón el mueble en piezas individuales (laterales, base, tapa, etc.) y anota el largo, ancho y grosor de cada una en una tabla, igual a la de arriba. Esto evita errores de "improvisar" medidas mientras cortas.</p>
+        </div>
+        <div class="card">
+          <h3>Comprobar escuadrado <span class="card-time">10 min</span></h3>
+          <p>Después de armar una pieza, mide las dos diagonales de la estructura: si son iguales, la pieza está en ángulo recto (escuadrada). Si difieren, hay que ajustar presionando suavemente en la diagonal más larga hasta igualar ambas medidas.</p>
+          <div class="tip">💡 Regla 3-4-5: si un lado mide 3 unidades, otro 4 unidades y la diagonal entre sus extremos mide 5 unidades (o cualquier múltiplo, como 30-40-50cm), el ángulo es exactamente 90°. Es un truco usado por carpinteros desde hace siglos.</div>
+        </div>
+        <div class="card">
+          <h3>Trazado de líneas de corte <span class="card-time">6 min</span></h3>
+          <p>Usa la escuadra para trazar líneas perpendiculares al borde de la pieza, apoyando firmemente el talón de la escuadra contra el canto. Para cortes a 45°, usa una falsa escuadra o escuadra combinada, verificando el ángulo antes de marcar toda la línea.</p>
+        </div>
+        <div class="card">
+          <h3>Sistema métrico vs. imperial <span class="card-time">6 min</span></h3>
+          <p>En muchos países se usa el sistema métrico (mm, cm), mientras que planos o materiales importados pueden venir en pulgadas. Una pulgada equivale a 2.54cm. Elige un solo sistema para todo el proyecto y evita mezclar mediciones en cm con medidas en pulgadas, ya que las conversiones redondeadas acumulan error entre piezas.</p>
+          <table class="tabla">
+            <tr><th>Pulgadas</th><th>Centímetros aprox.</th></tr>
+            <tr><td>1/4"</td><td>0.6 cm</td></tr>
+            <tr><td>1/2"</td><td>1.3 cm</td></tr>
+            <tr><td>3/4"</td><td>1.9 cm</td></tr>
+            <tr><td>1"</td><td>2.54 cm</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Errores comunes de medición <span class="card-time">6 min</span></h3>
+          <ul>
+            <li><strong>Confundir el "cero" de la cinta:</strong> algunas cintas tienen una lengüeta móvil de calibración; verifica que esté bien ajustada.</li>
+            <li><strong>Medir sobre una superficie no plana:</strong> curva la cinta y da una lectura falsa; apoya la cinta sobre una superficie recta.</li>
+            <li><strong>No tener en cuenta el grosor de la hoja de sierra (kerf):</strong> cada corte "consume" 1-3mm de material; en piezas múltiples esto se acumula.</li>
+            <li><strong>Copiar medidas de una pieza ya cortada mal:</strong> si la primera pieza tiene un error, todas las que copian de ella heredan el mismo error.</li>
+          </ul>
+          <div class="tip">💡 Cuando cortes varias piezas idénticas, usa la primera pieza correcta como plantilla física para marcar las demás, en vez de medir cada una desde cero.</div>
+        </div>
+        <div id="quiz-m4"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 5: CORTES -->
+    <div id="modulo-5" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 5 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Técnicas de <span style="color:#fff8ec">Corte</span></div>
+        <div class="mod-desc">Domina el corte recto, el corte a inglete y el uso seguro de sierra de banco.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Corte recto con serrucho <span class="card-time">12 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Sujeta la pieza firmemente con una prensa, dejando la línea de corte fuera del área sujeta.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Inicia el corte con trazos cortos hacia atrás, guiando con el nudillo del pulgar apoyado contra la hoja.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Sierra con movimientos largos y parejos, dejando que el peso de la sierra trabaje en vez de forzar hacia abajo.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Reduce la velocidad al final del corte para evitar que la pieza sobrante se astille al desprenderse.</div></div>
+        </div>
+        <div class="card">
+          <h3>Uso seguro de sierra de banco <span class="card-time">14 min</span></h3>
+          <ul>
+            <li>Usa siempre el empujador (push stick) en cortes angostos, manteniendo los dedos lejos del disco.</li>
+            <li>Ajusta la guía paralela antes de encender la máquina, nunca con la sierra en movimiento.</li>
+            <li>Nunca retires el protector de disco: está diseñado para evitar el contacto accidental.</li>
+            <li>Mantén las manos alejadas de la línea de corte en todo momento, posicionándote a un lado del disco, no directamente detrás.</li>
+            <li>Espera a que el disco alcance su velocidad completa antes de empujar la pieza.</li>
+          </ul>
+          <div class="warn">⚠️ La sierra de banco es una de las herramientas más peligrosas del taller por el riesgo de retroceso (kickback). Nunca la operes sin supervisión la primera vez, y siempre lee el manual del fabricante.</div>
+        </div>
+        <div class="card">
+          <h3>Corte a inglete (45°) <span class="card-time">10 min</span></h3>
+          <p>Usa una ingletadora o caja de ingletes para guiar el corte en ángulos exactos de 45° y 90°. Es la base para marcos, molduras y esquinas de cajas, donde dos piezas a 45° se unen formando un ángulo recto perfecto.</p>
+        </div>
+        <div class="card">
+          <h3>Corte de curvas con sierra caladora <span class="card-time">8 min</span></h3>
+          <p>Para cortes curvos o calados internos, la sierra caladora es la herramienta indicada. Traza la curva con un lápiz, sujeta bien la pieza, y avanza despacio dejando que la hoja siga la línea sin forzar el giro, lo que podría romper la hoja o desviar el corte.</p>
+        </div>
+        <div class="card">
+          <h3>Control de tableros grandes <span class="card-time">8 min</span></h3>
+          <p>Al cortar un tablero grande (como una lámina completa de contrachapado), apóyalo sobre soportes o caballetes que sostengan ambos lados del corte, para que no se cierre sobre la hoja de sierra ni se caiga cuando la pieza se separe. Si trabajas solo, marca primero cortes más pequeños y manejables antes de hacer el corte final de precisión.</p>
+        </div>
+        <div class="card">
+          <h3>Evitar astillado <span class="card-time">8 min</span></h3>
+          <ul>
+            <li>Corta con la cara "buena" hacia arriba si usas serrucho tradicional (la sierra empuja las fibras hacia abajo).</li>
+            <li>Coloca cinta de pintor sobre la línea de corte en maderas o tableros propensos a astillarse, como el contrachapado.</li>
+            <li>Usa una tabla de sacrificio debajo de la pieza para sostener las fibras de salida del corte.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Qué herramienta usar según el corte <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo de corte</th><th>Herramienta recomendada</th></tr>
+            <tr><td>Recto, pieza pequeña</td><td>Serrucho de mano</td></tr>
+            <tr><td>Recto, repetitivo y preciso</td><td>Sierra de banco</td></tr>
+            <tr><td>Ángulo (45°, 90°, otros)</td><td>Ingletadora</td></tr>
+            <tr><td>Curvo o calado interno</td><td>Sierra caladora</td></tr>
+            <tr><td>Tablero grande difícil de mover</td><td>Sierra circular con guía</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Seguridad específica de la ingletadora <span class="card-time">8 min</span></h3>
+          <ul>
+            <li>Sujeta siempre la pieza firmemente contra la guía trasera antes de bajar la sierra.</li>
+            <li>Espera a que la hoja se detenga por completo antes de levantar la sierra tras el corte.</li>
+            <li>Mantén ambas manos fuera del recorrido de la hoja; usa una prensa en piezas pequeñas.</li>
+            <li>No cortes piezas más pequeñas que el mínimo recomendado por el fabricante: aumenta el riesgo de que salgan disparadas.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Velocidad de avance al cortar <span class="card-time">6 min</span></h3>
+          <p>Un error común de principiante es empujar la pieza demasiado rápido, lo que fuerza el motor, quema la madera y produce cortes irregulares. Deja que la herramienta corte a su ritmo: si sientes mucha resistencia o notas olor a quemado, estás avanzando demasiado rápido o la hoja necesita afilado.</p>
+        </div>
+        <div id="quiz-m5"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 6: UNIONES -->
+    <div id="modulo-6" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 6 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Uniones y <span style="color:#fff8ec">Fijación</span></div>
+        <div class="mod-desc">Clavos, tornillos, adhesivos y herrajes: las formas básicas de unir madera.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Clavado <span class="card-time">10 min</span></h3>
+          <p>Rápido y económico. Pretaladra un pequeño agujero guía en maderas duras o cerca de los bordes para evitar que se rajen. Clava en ángulo ligero alternado ("clavado a contrahilo") para mayor sujeción, especialmente cuando no puedes acceder desde ambos lados de la unión.</p>
+        </div>
+        <div class="card">
+          <h3>Atornillado <span class="card-time">10 min</span></h3>
+          <p>Más resistente y desmontable que el clavo. Siempre pretaladra un agujero guía del diámetro del núcleo del tornillo (sin las roscas), y un avellanado para que la cabeza quede a ras o ligeramente hundida.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de tornillos y cuándo usarlos <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>Tornillo para madera de cabeza plana:</strong> uso general, cabeza avellanada que queda a ras.</li>
+            <li><strong>Tornillo autoperforante:</strong> reduce o elimina la necesidad de pretaladrar en maderas blandas.</li>
+            <li><strong>Tornillo de rosca gruesa vs. fina:</strong> la rosca gruesa agarra mejor en maderas blandas; la fina, en maderas duras.</li>
+            <li><strong>Longitud del tornillo:</strong> como regla general, debe penetrar unas dos terceras partes de la pieza receptora sin atravesarla.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Encolado con adhesivos <span class="card-time">14 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Aplica una capa uniforme de cola blanca (PVA) en ambas superficies a unir.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Une las piezas y presiona con sargentos, distribuyendo la presión de forma pareja.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Retira el exceso de cola con un paño húmedo antes de que seque; una vez seca, es mucho más difícil de limpiar.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Deja secar bajo presión al menos 30-60 minutos (el curado total tarda unas 24 horas, tiempo en el que evitarás someter la unión a esfuerzo).</div></div>
+          <div class="tip">💡 Una unión bien encolada suele ser más fuerte que la madera misma: si algo falla, a menudo es la fibra de la madera alrededor, no la línea de cola.</div>
+        </div>
+        <div class="card">
+          <h3>Herrajes básicos <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>Bisagras:</strong> permiten el movimiento de puertas y tapas; existen de varios tipos según el ángulo de apertura necesario.</li>
+            <li><strong>Correderas o guías telescópicas:</strong> permiten que un cajón se deslice suavemente hacia adentro y afuera.</li>
+            <li><strong>Escuadras metálicas:</strong> refuerzan uniones en ángulo recto sin necesidad de técnicas de ebanistería avanzadas.</li>
+            <li><strong>Tacos y tornillos para pared:</strong> imprescindibles para instalar piezas como repisas de forma segura sobre mampostería.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Combinando técnicas <span class="card-time">6 min</span></h3>
+          <p>En la práctica, lo más resistente es combinar cola blanca con clavos o tornillos: la cola da fuerza estructural en toda la superficie de contacto, y el clavo o tornillo mantiene la presión mientras la cola cura, sin necesidad de sargentos durante horas.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de clavos más comunes <span class="card-time">6 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo</th><th>Uso</th></tr>
+            <tr><td>Clavo de cabeza plana</td><td>Uso general, fácil de ocultar con masilla</td></tr>
+            <tr><td>Clavo sin cabeza (finish nail)</td><td>Molduras y acabados donde no debe verse la cabeza</td></tr>
+            <tr><td>Clavo espiral</td><td>Mayor agarre, usado en estructuras y exteriores</td></tr>
+            <tr><td>Grapa de carpintero</td><td>Fijación rápida de piezas ligeras con grapadora neumática</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Guía rápida de adhesivos <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Cola blanca (PVA):</strong> uso general en interiores, económica, fácil de limpiar con agua antes de secar.</li>
+            <li><strong>Cola amarilla (aliphatic):</strong> similar a la PVA pero con mejor resistencia a la humedad y secado algo más rápido.</li>
+            <li><strong>Cola de contacto:</strong> para enchapes y laminados; se aplica en ambas caras y hace presa al instante, sin margen de ajuste.</li>
+            <li><strong>Cola epóxica:</strong> muy resistente, rellena huecos, útil en reparaciones o uniones de alta exigencia; más cara y de secado más lento.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Resistencia comparativa de uniones <span class="card-time">6 min</span></h3>
+          <p>Como referencia general para un principiante: una unión solo con clavos es la más rápida pero la más débil; solo con tornillos mejora la resistencia y permite desarmar; solo con cola blanca bien aplicada y prensada puede superar a ambas en tracción, pero requiere tiempo de curado; la combinación de cola con tornillos o clavos ofrece lo mejor de ambos mundos: resistencia inmediata y a largo plazo.</p>
+        </div>
+        <div id="quiz-m6"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 7: PROYECTO PRACTICO -->
+    <div id="modulo-7" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 7 de 8</span><span class="mod-time">⏱ 120 min</span></div>
+        <div class="mod-title">Proyecto Práctico: <span style="color:#fff8ec">Repisa de Pared</span></div>
+        <div class="mod-desc">Aplica todo lo aprendido construyendo tu primer proyecto real.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Antes de empezar: planificación <span class="card-time">10 min</span></h3>
+          <p>Revisa el espacio donde instalarás la repisa: mide el ancho disponible, identifica si la pared es de mampostería o de tablaroca/drywall (esto determina el tipo de anclaje que necesitarás), y decide la altura final según su uso (decorativa, para libros, para plantas).</p>
+        </div>
+        <div class="card">
+          <h3>Lista de materiales <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Pieza</th><th>Cant.</th><th>Medidas</th></tr>
+            <tr><td>Tabla base (repisa)</td><td>1</td><td>60 x 20 x 1.8 cm</td></tr>
+            <tr><td>Soporte lateral tipo L</td><td>2</td><td>18 x 15 x 1.8 cm</td></tr>
+          </table>
+          <p style="margin-top:8px;">Además necesitas: cola blanca, tornillos de 4x40mm, tacos y tornillos para pared, lija grano 120 y 220, nivel de burbuja y el acabado de tu elección.</p>
+        </div>
+        <div class="card">
+          <h3>Paso a paso de construcción <span class="card-time">75 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Corta las 3 piezas según la lista de despiece, verificando cada medida dos veces antes de serrar (≈15 min).</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Lija los bordes de corte con grano 120 para eliminar astillas y suavizar las aristas (≈10 min).</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Marca la posición de los soportes laterales sobre la cara inferior de la tabla base, a 5cm de cada extremo (≈5 min).</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Aplica cola blanca en el canto superior de cada soporte y fija con sargento contra la tabla base (≈10 min).</div></div>
+          <div class="paso"><div class="paso-num">5</div><div class="paso-text">Pretaladra y atornilla cada soporte desde arriba de la tabla base, con 2 tornillos por soporte (≈15 min).</div></div>
+          <div class="paso"><div class="paso-num">6</div><div class="paso-text">Verifica el escuadrado midiendo las diagonales de cada soporte en L y ajusta si es necesario mientras la cola sigue fresca (≈10 min).</div></div>
+          <div class="paso"><div class="paso-num">7</div><div class="paso-text">Deja curar la cola al menos 30 minutos antes de manipular la pieza con esfuerzo.</div></div>
+          <div class="tip">💡 Aprovecha el tiempo de curado de la cola para preparar los materiales de instalación en la pared.</div>
+        </div>
+        <div class="card">
+          <h3>Instalación en la pared <span class="card-time">20 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Marca con nivel de burbuja la altura deseada en la pared, trazando una línea horizontal de referencia.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Ubica los puntos de anclaje según el ancho real de tus soportes, verificando que coincidan con los agujeros que dejarás en la repisa.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Taladra e inserta tacos si la pared es de mampostería; si es tablaroca, usa anclajes específicos para ese material y su peso máximo soportado.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Atornilla la repisa firmemente contra la pared, comprobando el nivel una última vez antes de apretar del todo.</div></div>
+          <div class="warn">⚠️ Verifica el peso máximo que soportará tu pared y anclajes antes de cargar objetos pesados sobre la repisa terminada.</div>
+        </div>
+        <div class="card">
+          <h3>Variaciones del proyecto <span class="card-time">5 min</span></h3>
+          <p>Una vez domines esta repisa básica, puedes adaptarla: agrega un borde decorativo con una moldura pegada al canto frontal, haz una versión doble con dos repisas a distinta altura, o cambia las medidas para adaptarla a un espacio específico de tu casa, manteniendo siempre la misma lógica de construcción.</p>
+        </div>
+        <div class="card">
+          <h3>Checklist del proyecto</h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Piezas cortadas según medida</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Bordes lijados sin astillas</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Soportes encolados y atornillados</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Escuadrado verificado</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Repisa instalada a nivel</div>
+        </div>
+        <div class="card">
+          <h3>Presupuesto estimado del proyecto <span class="card-time">5 min</span></h3>
+          <table class="tabla">
+            <tr><th>Concepto</th><th>Costo aproximado</th></tr>
+            <tr><td>Madera (tabla base + soportes)</td><td>$</td></tr>
+            <tr><td>Tornillos y tacos</td><td>$</td></tr>
+            <tr><td>Cola blanca</td><td>$</td></tr>
+            <tr><td>Lija (2 granos)</td><td>$</td></tr>
+            <tr><td>Acabado (barniz o pintura)</td><td>$</td></tr>
+          </table>
+          <p style="margin-top:8px;">Este proyecto está pensado como el más económico posible del curso: su valor está en la práctica, no en el material invertido.</p>
+        </div>
+        <div class="card">
+          <h3>Errores comunes en este proyecto <span class="card-time">7 min</span></h3>
+          <ul>
+            <li><strong>No pretaladrar cerca del borde del soporte:</strong> es la causa más frecuente de que la madera se raje al atornillar.</li>
+            <li><strong>Atornillar antes de que la cola haga presa inicial:</strong> el soporte puede desalinearse mientras aprietas el tornillo; aplica el sargento primero.</li>
+            <li><strong>Ignorar el nivel al instalar:</strong> una repisa "casi nivelada" se nota a simple vista; usa siempre el nivel de burbuja.</li>
+            <li><strong>Usar tacos incorrectos para el tipo de pared:</strong> un taco para mampostería no sirve igual en tablaroca/drywall; verifica el material de tu pared antes de comprar anclajes.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Proyecto alterno (bonus): Caja organizadora <span class="card-time">8 min</span></h3>
+          <p>Si quieres practicar más antes de pasar al curso intermedio, una caja organizadora simple (4 laterales + base, unidos con cola y clavos, sin tapa) usa exactamente las mismas técnicas que la repisa: corte recto, escuadrado, encolado y clavado. Medidas sugeridas: base de 30x20cm y laterales de 10cm de alto. Es un excelente segundo proyecto para ganar confianza antes de intentar piezas con puertas o cajones en el curso intermedio.</p>
+        </div>
+        <div id="quiz-m7"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 8: ACABADO -->
+    <div id="modulo-8" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 8 de 8</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Lijado, Acabado <span style="color:#fff8ec">y Resolución de Problemas</span></div>
+        <div class="mod-desc">El toque final que protege tu proyecto y lo hace lucir profesional.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Secuencia de lijado <span class="card-time">12 min</span></h3>
+          <p>Empieza con grano grueso (80-100) para nivelar imperfecciones y marcas de herramienta, sigue con grano medio (120-150) para suavizar, y termina con grano fino (180-220) antes de aplicar acabado. Saltarte granos intermedios deja marcas visibles que el acabado resalta en vez de ocultar. Siempre lija a favor de la veta, nunca en contra ni en círculos con lija manual.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de acabado básico <span class="card-time">14 min</span></h3>
+          <ul>
+            <li><strong>Aceite de linaza/tung:</strong> fácil de aplicar con un paño, resalta la veta natural, pero ofrece poca protección frente a rayones y agua; requiere reaplicación periódica.</li>
+            <li><strong>Barniz al agua:</strong> secado rápido, buena protección, bajo olor; ideal para trabajar en espacios cerrados o con poca ventilación.</li>
+            <li><strong>Pintura:</strong> cubre imperfecciones y nudos, ideal en maderas blandas como pino cuando el acabado natural no es prioridad.</li>
+            <li><strong>Cera para madera:</strong> acabado suave y natural al tacto, fácil de aplicar, pero la protección es mínima y se desgasta con el uso.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Aplicación paso a paso de barniz <span class="card-time">12 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Limpia el polvo de la superficie con un paño húmedo y deja secar por completo.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Aplica la primera capa con brocha o paño, siguiendo la dirección de la veta, en una capa delgada y uniforme.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Deja secar según el tiempo indicado por el fabricante (normalmente 2-4 horas).</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Lija suavemente con grano 320 para eliminar el "pelo" que levanta la primera capa, y limpia el polvo resultante.</div></div>
+          <div class="paso"><div class="paso-num">5</div><div class="paso-text">Aplica una segunda (y si es necesario, tercera) capa delgada, repitiendo el proceso de lijado entre manos.</div></div>
+        </div>
+        <div class="card">
+          <h3>Problemas comunes y soluciones <span class="card-time">14 min</span></h3>
+          <ul>
+            <li><strong>Astillado al cortar:</strong> usa cinta de pintor sobre la línea de corte o una tabla de sacrificio debajo de la pieza.</li>
+            <li><strong>Tornillo que raja la madera:</strong> pretaladra siempre, especialmente cerca de bordes y en maderas duras.</li>
+            <li><strong>Pieza que no queda escuadrada:</strong> corrige antes de que la cola seque, ajustando con un sargento colocado en diagonal.</li>
+            <li><strong>Acabado con marcas de brocha:</strong> aplica capas más delgadas y lija suavemente entre manos; considera aplicar con un paño en vez de brocha.</li>
+            <li><strong>Manchas irregulares al aplicar tinte:</strong> suelen deberse a un lijado desigual; asegúrate de lijar toda la superficie con el mismo grano final antes de aplicar.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cuidado y mantenimiento a largo plazo <span class="card-time">4 min</span></h3>
+          <p>Limpia tus proyectos terminados con un paño ligeramente húmedo, evitando productos abrasivos. Si el acabado se desgasta con el tiempo (uso frecuente, exposición al sol), una capa de mantenimiento cada uno o dos años prolonga su vida útil sin necesidad de lijar todo de nuevo.</p>
+        </div>
+        <div class="card">
+          <h3>Checklist final de proyecto <span class="card-time">4 min</span></h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Todas las uniones firmes y sin holguras</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Superficie lijada hasta grano 220</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Polvo eliminado con paño húmedo</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Acabado aplicado en capas delgadas</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Área de trabajo limpia</div>
+        </div>
+        <div class="card">
+          <h3>Tabla comparativa de acabados <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Acabado</th><th>Protección</th><th>Facilidad</th><th>Ideal para</th></tr>
+            <tr><td>Aceite</td><td>Baja</td><td>Muy fácil</td><td>Tablas de cocina, muebles rústicos</td></tr>
+            <tr><td>Cera</td><td>Muy baja</td><td>Fácil</td><td>Piezas decorativas de bajo uso</td></tr>
+            <tr><td>Barniz al agua</td><td>Media-alta</td><td>Fácil</td><td>Muebles de uso diario en interiores</td></tr>
+            <tr><td>Poliuretano</td><td>Alta</td><td>Media</td><td>Mesas, pisos, superficies exigidas</td></tr>
+            <tr><td>Pintura</td><td>Alta (cubre defectos)</td><td>Fácil</td><td>Pino con nudos, muebles infantiles</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Mantenimiento estacional de proyectos en madera <span class="card-time">6 min</span></h3>
+          <p>Si tu proyecto está en exteriores o cerca de una ventana con mucho sol, revisa el acabado cada 6-12 meses: busca zonas donde el brillo se haya opacado o la madera se sienta reseca al tacto, señal de que es momento de una capa de mantenimiento. En interiores con clima estable, una revisión anual es suficiente.</p>
+        </div>
+        <div class="card">
+          <h3>Preguntas frecuentes sobre acabados <span class="card-time">6 min</span></h3>
+          <p><strong>¿Puedo aplicar barniz sobre pintura?</strong> No es lo habitual; el barniz está pensado para resaltar la veta de la madera, no para ir sobre pintura. Si quieres proteger una pieza pintada, usa un sellador o barniz específico para superficies pintadas.</p>
+          <p><strong>¿Cuánto debo esperar entre manos?</strong> Sigue siempre el tiempo indicado en el envase del producto; aplicar una capa nueva demasiado pronto puede levantar la anterior o dejar un acabado pegajoso.</p>
+          <p><strong>¿Por qué mi acabado quedó con textura de "piel de naranja"?</strong> Generalmente por aplicar capas demasiado gruesas o secarlas demasiado rápido con calor directo; usa capas delgadas y deja secar a temperatura ambiente.</p>
+        </div>
+        <div id="quiz-m8"></div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div id="sec-calc" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num">Herramienta</div>
+        <div class="mod-title">Calculadora de <span style="color:#fff8ec">Pies Tabla</span></div>
+        <div class="mod-desc">Calcula cuánta madera necesitas comprar.</div>
+      </div>
+      <div class="mod-body">
+        <div class="calc-box">
+          <div class="calc-row"><label>Largo (cm)</label><input type="number" id="ft-largo" placeholder="100"></div>
+          <div class="calc-row"><label>Ancho (cm)</label><input type="number" id="ft-ancho" placeholder="20"></div>
+          <div class="calc-row"><label>Grosor (cm)</label><input type="number" id="ft-grosor" placeholder="2.5"></div>
+          <div class="calc-row"><label>Cantidad de piezas</label><input type="number" id="ft-cant" placeholder="4"></div>
+          <button class="calc-btn" onclick="calcularPiesTabla()">Calcular</button>
+          <div class="calc-result" id="ft-resultado"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTAS -->
+    <div id="sec-notas" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num">Tu espacio</div>
+        <div class="mod-title">Notas del <span style="color:#fff8ec">Taller</span></div>
+        <div class="mod-desc">Guarda medidas, listas de compras o ideas. Se guardan en este dispositivo.</div>
+      </div>
+      <div class="mod-body">
+        <textarea id="nota-input" rows="3" placeholder="Escribe una nota..."></textarea>
+        <button class="calc-btn" onclick="agregarNota()">Guardar Nota</button>
+        <div id="notas-lista" style="margin-top:16px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let modulosVisitados = new Set([0]);
+let quizzesRespondidos = {};
+let notasGuardadas = [];
+let favoritosSet = new Set();
+const TOTAL_MODULOS = 9; // indice + 8 modulos
+
+const quizzes = {
+  m1: [
+    {p:"¿Cuál es el equipo de protección obligatorio al cortar madera?", ops:["Guantes gruesos","Gafas de seguridad","Corbata","Sandalias"], correcta:1},
+    {p:"¿Por qué se recomienda evitar mangas sueltas en el taller?", ops:["Por moda","Para no ensuciarlas","Para evitar enganches en partes móviles","No importa"], correcta:2},
+    {p:"¿Qué debes hacer antes de cambiar un accesorio en una herramienta eléctrica?", ops:["Nada especial","Desconectarla de la corriente","Aumentar la velocidad","Quitarle el protector"], correcta:1},
+    {p:"¿Por qué es importante la ventilación al lijar o cortar?", ops:["Para que se seque más rápido el barniz","Para reducir la exposición al polvo de madera","No tiene relación con la seguridad","Solo por comodidad"], correcta:1}
+  ],
+  m2: [
+    {p:"¿Cuál es una madera blanda económica ideal para principiantes?", ops:["Nogal","Pino","Cerezo","Roble"], correcta:1},
+    {p:"¿Qué tablero es ideal para pintar por su superficie lisa?", ops:["MDF","Contrachapado","Aglomerado sin recubrir","Madera maciza sin lijar"], correcta:0},
+    {p:"¿Por qué se debe dejar aclimatar la madera antes de construir?", ops:["Por estética","Porque se expande y contrae con la humedad","No es necesario","Para que cambie de color"], correcta:1},
+    {p:"¿Qué zona del tronco suele ser más densa y resistente?", ops:["La albura (zona externa)","El duramen o corazón (zona interna)","La corteza","No hay diferencia"], correcta:1}
+  ],
+  m3: [
+    {p:"¿Cuál suele ser la herramienta eléctrica más versátil para empezar?", ops:["Sierra de banco","Taladro/atornillador inalámbrico","Router","Lijadora de banda"], correcta:1},
+    {p:"¿Para qué sirve la falsa escuadra?", ops:["Medir distancias largas","Trasladar y verificar ángulos distintos a 90°","Lijar superficies","Cortar madera"], correcta:1},
+    {p:"¿Qué se debe hacer con brocas y hojas de sierra para evitar óxido?", ops:["Dejarlas al aire libre","Guardarlas en un lugar seco","Mojarlas regularmente","No requieren cuidado"], correcta:1},
+    {p:"¿Qué determina el número de dientes de una hoja de sierra?", ops:["El color del corte","La finura del acabado de corte","El precio únicamente","Nada relevante"], correcta:1}
+  ],
+  m4: [
+    {p:"En la regla 3-4-5, ¿qué indica si las medidas coinciden exactamente?", ops:["Que la madera es de buena calidad","Que el ángulo es de 90°","Que la pieza está húmeda","Nada en particular"], correcta:1},
+    {p:"¿Cómo se debe marcar una medida en la madera?", ops:["Con un punto grueso","Con una línea fina tipo 'V'","No es necesario marcar","Con pintura"], correcta:1},
+    {p:"¿Qué indica la 'cota' en un plano?", ops:["El color de la madera","La medida exacta de un elemento","El precio del material","El tipo de acabado"], correcta:1},
+    {p:"¿Qué herramienta se usa para marcar líneas paralelas a un borde a distancia constante?", ops:["El compás","El gramil","La falsa escuadra","El nivel"], correcta:1}
+  ],
+  m5: [
+    {p:"¿Qué ayuda a evitar el astillado al cortar?", ops:["Cortar muy rápido","Usar cinta de pintor sobre la línea de corte","Cortar sin sujetar la pieza","Usar la sierra más vieja"], correcta:1},
+    {p:"¿Qué se debe usar en la sierra de banco para cortes angostos?", ops:["Las manos directamente","Un empujador (push stick)","Nada especial","Guantes gruesos"], correcta:1},
+    {p:"¿Para qué sirve la caja de ingletes o ingletadora?", ops:["Guardar herramientas","Guiar cortes en ángulos exactos","Medir humedad","Lijar madera"], correcta:1},
+    {p:"¿Qué herramienta es más adecuada para cortes curvos?", ops:["Sierra de banco","Sierra caladora","Serrucho recto","Ingletadora"], correcta:1}
+  ],
+  m6: [
+    {p:"¿Por qué se pretaladra antes de atornillar?", ops:["Para gastar más tiempo","Para evitar que la madera se raje","No es necesario","Para que se vea mejor"], correcta:1},
+    {p:"¿Qué se debe hacer con el exceso de cola blanca?", ops:["Dejarlo secar y lijarlo después","Retirarlo con paño húmedo antes de secar","Ignorarlo","Agregar más cola"], correcta:1},
+    {p:"¿Cuál es la combinación más resistente para unir piezas?", ops:["Solo clavos","Cola blanca combinada con tornillos o clavos","Solo cola sin presión","Ninguna, con apoyarlas basta"], correcta:1},
+    {p:"¿Qué tipo de rosca de tornillo agarra mejor en maderas blandas?", ops:["Rosca fina","Rosca gruesa","No influye el tipo de rosca","Sin rosca"], correcta:1}
+  ],
+  m7: [
+    {p:"¿A qué distancia de los extremos se recomienda ubicar los soportes de la repisa del proyecto?", ops:["En el centro exacto","A 5cm de cada extremo","En cualquier posición aleatoria","No importa la posición"], correcta:1},
+    {p:"¿Qué se debe verificar antes de cargar objetos pesados en una repisa instalada?", ops:["El color de la pintura","El peso máximo que soportan pared y anclajes","La marca del taladro","Nada, siempre es seguro"], correcta:1},
+    {p:"¿Qué se recomienda hacer mientras la cola de los soportes está curando?", ops:["Cargar la repisa de inmediato","Preparar los materiales de instalación en la pared","Lijar la pieza con fuerza","Aplicar el acabado final"], correcta:1}
+  ],
+  m8: [
+    {p:"¿En qué dirección se debe lijar la madera?", ops:["En círculos siempre","A favor de la veta","En contra de la veta","No importa la dirección"], correcta:1},
+    {p:"¿Qué grano de lija se usa para el acabado final?", ops:["40-60 (muy grueso)","80-100","180-220 (fino)","No se usa lija al final"], correcta:2},
+    {p:"¿Cuál es la mejor solución si un tornillo raja la madera?", ops:["Usar un tornillo más grande","Pretaladrar un agujero guía antes de atornillar","Golpear más fuerte","Ignorar el problema"], correcta:1},
+    {p:"¿Por qué se lija suavemente entre manos de barniz?", ops:["Para quitar todo el barniz aplicado","Para eliminar el 'pelo' que levanta la primera capa","No es necesario hacerlo","Para cambiar el color"], correcta:1}
+  ]
+};
+
+function iniciarCurso(){
+  document.getElementById('splash').classList.add('hide');
+  document.getElementById('app').classList.add('visible');
+  cargarEstado();
+  renderQuizzes();
+  actualizarProgreso();
+}
+
+function renderQuizzes(){
+  Object.keys(quizzes).forEach(k=>{
+    const container = document.getElementById('quiz-'+k);
+    if(!container) return;
+    const q = quizzes[k];
+    let html = '<h3 style="font-family:Oswald,sans-serif;color:var(--madera);margin-bottom:10px;">📋 Pon a prueba lo aprendido</h3>';
+    q.forEach((quiz,qi)=>{
+      html += `<div class="quiz-wrap" id="qw-${k}-${qi}">
+        <div class="quiz-pregunta">${qi+1}. ${quiz.p}</div>
+        <div class="quiz-opciones">
+          ${quiz.ops.map((op,oi)=>`<button class="quiz-opt" onclick="responderQuiz('${k}',${qi},${oi})">${op}</button>`).join('')}
+        </div>
+        <div class="quiz-feedback" id="qf-${k}-${qi}"></div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  });
+  Object.keys(quizzesRespondidos).forEach(id=>{
+    const [k,qi] = id.split('-');
+    const oi = quizzesRespondidos[id];
+    const q = quizzes[k] && quizzes[k][qi];
+    if(!q) return;
+    const wrap = document.getElementById('qw-'+k+'-'+qi);
+    if(!wrap) return;
+    const opts = wrap.querySelectorAll('.quiz-opt');
+    opts.forEach((o,i)=>{
+      if(i===q.correcta) o.classList.add('correcta');
+      if(i===Number(oi) && i!==q.correcta) o.classList.add('incorrecta');
+    });
+    const fb = document.getElementById('qf-'+k+'-'+qi);
+    fb.classList.add('show', Number(oi)===q.correcta ? 'ok':'fail');
+    fb.textContent = Number(oi)===q.correcta ? '¡Correcto!' : 'Incorrecto. La respuesta correcta está resaltada.';
+  });
+}
+
+function responderQuiz(k, qi, oi){
+  const id = k+'-'+qi;
+  if(quizzesRespondidos[id] !== undefined) return;
+  quizzesRespondidos[id] = oi;
+  const q = quizzes[k][qi];
+  const wrap = document.getElementById('qw-'+k+'-'+qi);
+  const opts = wrap.querySelectorAll('.quiz-opt');
+  opts.forEach((o,i)=>{
+    if(i===q.correcta) o.classList.add('correcta');
+    if(i===oi && i!==q.correcta) o.classList.add('incorrecta');
+  });
+  const fb = document.getElementById('qf-'+k+'-'+qi);
+  fb.classList.add('show', oi===q.correcta ? 'ok':'fail');
+  fb.textContent = oi===q.correcta ? '¡Correcto!' : 'Incorrecto. La respuesta correcta está resaltada.';
+  guardarEstado();
+  actualizarProgreso();
+}
+
+function toggleCheck(item){
+  item.classList.toggle('checked');
+}
+
+function irModulo(n){
+  document.querySelectorAll('.modulo').forEach(m=>m.classList.remove('active'));
+  const ids = ['sec-indice','modulo-1','modulo-2','modulo-3','modulo-4','modulo-5','modulo-6','modulo-7','modulo-8'];
+  document.getElementById(ids[n]).classList.add('active');
+  document.querySelectorAll('.nav-mod-btn').forEach((b,i)=>b.classList.toggle('active', i===n));
+  modulosVisitados.add(n);
+  guardarEstado();
+  actualizarProgreso();
+  window.scrollTo(0,0);
+}
+
+function irVista(vista){
+  document.querySelectorAll('.modulo').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.nav-mod-btn').forEach(b=>b.classList.remove('active'));
+  if(vista==='notas'){ document.getElementById('sec-notas').classList.add('active'); renderizarNotas(); }
+  if(vista==='calc'){ document.getElementById('sec-calc').classList.add('active'); }
+  window.scrollTo(0,0);
+}
+
+function actualizarProgreso(){
+  const pct = Math.round((modulosVisitados.size / TOTAL_MODULOS) * 100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = pct+'%';
+  if (typeof CertificadoModule !== 'undefined') CertificadoModule.autoGenerarSiCompleto('basico', pct);
+}
+
+function calcularPiesTabla(){
+  const largo = parseFloat(document.getElementById('ft-largo').value)||0;
+  const ancho = parseFloat(document.getElementById('ft-ancho').value)||0;
+  const grosor = parseFloat(document.getElementById('ft-grosor').value)||0;
+  const cant = parseFloat(document.getElementById('ft-cant').value)||1;
+  const volumenCm3 = largo*ancho*grosor*cant;
+  const piesTabla = volumenCm3 / 2359.74; // 1 pie tabla = 2359.74 cm3
+  document.getElementById('ft-resultado').textContent =
+    `Necesitas aprox. ${piesTabla.toFixed(2)} pies tabla (${(volumenCm3/1000).toFixed(1)} litros de volumen de madera)`;
+}
+
+function toggleFavorito(id){
+  if(favoritosSet.has(id)) favoritosSet.delete(id); else favoritosSet.add(id);
+  const btn = document.getElementById('fav-'+id);
+  if(btn) btn.textContent = favoritosSet.has(id) ? '★' : '☆';
+  guardarEstado();
+}
+
+function toggleBusqueda(){
+  document.getElementById('search-bar').classList.toggle('show');
+}
+function limpiarBusqueda(){
+  document.getElementById('search-input').value='';
+  document.getElementById('search-bar').classList.remove('show');
+}
+
+function agregarNota(){
+  const val = document.getElementById('nota-input').value.trim();
+  if(!val) return;
+  notasGuardadas.push({texto:val, fecha:new Date().toLocaleDateString()});
+  document.getElementById('nota-input').value='';
+  guardarEstado();
+  renderizarNotas();
+  showToast('Nota guardada');
+}
+function renderizarNotas(){
+  const cont = document.getElementById('notas-lista');
+  if(notasGuardadas.length===0){ cont.innerHTML='<p style="color:var(--gris);font-size:13px;">Aún no tienes notas.</p>'; return; }
+  cont.innerHTML = notasGuardadas.map((n,i)=>`
+    <div class="note-item">
+      <button class="note-del" onclick="borrarNota(${i})">✕</button>
+      <div>${n.texto}</div>
+      <div style="color:var(--gris);font-size:11px;margin-top:4px;">${n.fecha}</div>
+    </div>`).join('');
+}
+function borrarNota(i){
+  notasGuardadas.splice(i,1);
+  guardarEstado();
+  renderizarNotas();
+}
+
+function mostrarLogros(){
+  const total = Object.keys(quizzesRespondidos).length;
+  const correctas = Object.keys(quizzesRespondidos).filter(id=>{
+    const [k,qi]=id.split('-');
+    return quizzes[k][qi].correcta === quizzesRespondidos[id];
+  }).length;
+  alert(`Progreso de logros:\n\n🪵 Módulos visitados: ${modulosVisitados.size-1}/8\n📋 Preguntas respondidas: ${total}/31\n✅ Respuestas correctas: ${correctas}\n⭐ Favoritos guardados: ${favoritosSet.size}\n📝 Notas guardadas: ${notasGuardadas.length}`);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function guardarEstado(){
+  try{
+    localStorage.setItem('carpbasico_visitados', JSON.stringify([...modulosVisitados]));
+    localStorage.setItem('carpbasico_quizzes', JSON.stringify(quizzesRespondidos));
+    localStorage.setItem('carpbasico_notas', JSON.stringify(notasGuardadas));
+    localStorage.setItem('carpbasico_favoritos', JSON.stringify([...favoritosSet]));
+  }catch(e){ console.warn('localStorage no disponible'); }
+}
+function cargarEstado(){
+  try{
+    const v = JSON.parse(localStorage.getItem('carpbasico_visitados') || '[0]');
+    modulosVisitados = new Set(v);
+    quizzesRespondidos = JSON.parse(localStorage.getItem('carpbasico_quizzes') || '{}');
+    notasGuardadas = JSON.parse(localStorage.getItem('carpbasico_notas') || '[]');
+    favoritosSet = new Set(JSON.parse(localStorage.getItem('carpbasico_favoritos') || '[]'));
+    favoritosSet.forEach(id=>{
+      const btn = document.getElementById('fav-'+id);
+      if(btn) btn.textContent = '★';
+    });
+  }catch(e){ console.warn('No se pudo cargar el estado'); }
+}
+</script>
+</body>
+</html>

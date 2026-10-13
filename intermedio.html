@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carpintería Intermedia: Curso de 8 Horas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+  :root{
+    --nogal:#3e2723; --nogal-claro:#6d4c41; --caramelo:#c8865a;
+    --fondo:#211815; --panel:#2b201b; --borde:#4a3a30;
+    --texto:#f2e9dd; --gris:#b3a190;
+    --verde:#66bb6a; --rojo:#ef5350; --azul:#42a5f5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;overscroll-behavior:none;}
+  #splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--nogal);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:24px;text-align:center;transition:opacity .5s;}
+  #splash.hide{opacity:0;pointer-events:none;}
+  .splash-icon{font-size:72px;margin-bottom:16px;animation:router 1.1s ease-in-out infinite alternate;}
+  @keyframes router{from{transform:translateX(-6px) rotate(-3deg);}to{transform:translateX(6px) rotate(3deg);}}
+  .splash-title{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--caramelo);letter-spacing:.5px;text-transform:uppercase;line-height:1.2;margin-bottom:8px;}
+  .splash-sub{color:var(--gris);font-size:13px;margin-bottom:32px;}
+  .splash-badge{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:36px;}
+  .badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--caramelo);font-weight:500;}
+  .btn-start{touch-action:manipulation;-webkit-appearance:none;background:linear-gradient(135deg,var(--caramelo),#e0a878);color:#241914;border:none;padding:16px 40px;border-radius:4px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+  .btn-start:active{transform:scale(.97);}
+  #app{display:none;min-height:100vh;}
+  #app.visible{display:block;}
+  .app-header{position:sticky;top:0;z-index:100;background:var(--panel);border-bottom:2px solid var(--caramelo);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+  .header-logo{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:var(--caramelo);text-transform:uppercase;letter-spacing:1px;}
+  .header-actions{display:flex;align-items:center;gap:10px;}
+  .icon-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--caramelo);}
+  .header-progress{font-size:12px;color:var(--gris);display:flex;align-items:center;gap:8px;}
+  .progress-bar{width:70px;height:4px;background:var(--borde);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--caramelo),#e0a878);border-radius:2px;transition:width .4s ease;}
+  .nav-modulos{display:flex;overflow-x:auto;gap:8px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--borde);scrollbar-width:none;}
+  .nav-modulos::-webkit-scrollbar{display:none;}
+  .nav-mod-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--borde);background:transparent;color:var(--gris);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;}
+  .nav-mod-btn.active{background:var(--caramelo);border-color:var(--caramelo);color:#241914;font-weight:700;}
+  .nav-mod-btn.done{border-color:var(--verde);color:var(--verde);}
+  .content-area{padding:0 0 80px;}
+  .modulo{display:none;}
+  .modulo.active{display:block;}
+  .mod-hero{background:linear-gradient(135deg,var(--nogal) 60%,var(--nogal-claro));padding:24px 16px 20px;}
+  .mod-num{font-size:11px;font-weight:600;color:var(--caramelo);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+  .mod-time{background:rgba(255,255,255,.14);padding:3px 10px;border-radius:12px;font-size:11px;color:var(--texto);letter-spacing:0;}
+  .mod-title{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;line-height:1.15;margin-bottom:10px;color:var(--texto);}
+  .mod-desc{font-size:13px;color:#d9c9b8;}
+  .mod-body{padding:18px 16px;}
+  .card{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .card h3{font-family:'Oswald',sans-serif;font-size:16px;color:var(--caramelo);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .card-time{font-size:11px;color:var(--gris);font-weight:500;background:var(--fondo);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+  .card p, .card li{font-size:14px;color:var(--texto);}
+  .card p{margin-bottom:8px;}
+  .card p:last-child{margin-bottom:0;}
+  .card ul, .card ol{padding-left:18px;margin-top:6px;}
+  .card li{margin-bottom:6px;}
+  .subh{font-size:13px;font-weight:700;color:var(--caramelo);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px;}
+  .tip{background:rgba(200,134,90,.12);border-left:4px solid var(--caramelo);padding:10px 12px;border-radius:6px;font-size:13px;margin-top:10px;}
+  .warn{background:rgba(239,83,80,.12);border-left:4px solid var(--rojo);padding:10px 12px;border-radius:6px;font-size:13px;margin-top:10px;}
+  .paso{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+  .paso-num{flex-shrink:0;width:24px;height:24px;background:var(--caramelo);color:#241914;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .paso-text{font-size:14px;}
+  .tabla{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px;}
+  .tabla th, .tabla td{border:1px solid var(--borde);padding:6px 8px;text-align:left;}
+  .tabla th{background:rgba(200,134,90,.15);color:var(--caramelo);}
+  .checklist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde);font-size:14px;cursor:pointer;}
+  .checklist-item.checked{color:var(--verde);text-decoration:line-through;opacity:.7;}
+  .check-box{width:18px;height:18px;border:2px solid var(--caramelo);border-radius:4px;flex-shrink:0;}
+  .checklist-item.checked .check-box{background:var(--verde);border-color:var(--verde);}
+  .quiz-wrap{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:12px;}
+  .quiz-pregunta{font-size:14px;font-weight:600;margin-bottom:10px;}
+  .quiz-opciones{display:flex;flex-direction:column;gap:8px;}
+  .quiz-opt{background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:10px 12px;text-align:left;font-size:13px;color:var(--texto);cursor:pointer;}
+  .quiz-opt:active{transform:scale(.98);}
+  .quiz-opt.correcta{background:rgba(102,187,106,.2);border-color:var(--verde);color:#a5d6a7;}
+  .quiz-opt.incorrecta{background:rgba(239,83,80,.15);border-color:var(--rojo);color:#ff8a80;}
+  .quiz-feedback{display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:rgba(102,187,106,.15);color:#a5d6a7;border:1px solid var(--verde);}
+  .quiz-feedback.fail{background:rgba(239,83,80,.1);color:#ff8a80;border:1px solid var(--rojo);}
+  .calc-box{background:var(--panel);border:1px solid var(--borde);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .calc-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+  .calc-row label{font-size:12px;color:var(--gris);flex:1;}
+  .calc-row input{flex:1;padding:8px;border:1px solid var(--borde);border-radius:6px;font-size:14px;background:var(--fondo);color:var(--texto);}
+  .calc-btn{background:var(--caramelo);color:#241914;border:none;padding:10px 16px;border-radius:6px;font-weight:700;cursor:pointer;width:100%;font-size:14px;}
+  .calc-result{margin-top:10px;padding:10px;background:var(--fondo);border-radius:8px;font-size:14px;font-weight:600;color:var(--caramelo);text-align:center;}
+  .fav-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--caramelo);}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--caramelo);color:#241914;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;font-weight:600;}
+  .toast.show{opacity:1;}
+  .search-bar{display:none;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--borde);}
+  .search-bar.show{display:flex;gap:8px;}
+  .search-bar input{flex:1;padding:8px 10px;border:1px solid var(--borde);border-radius:6px;font-size:14px;background:var(--fondo);color:var(--texto);}
+  .note-item{background:var(--fondo);border-radius:8px;padding:10px;margin-bottom:8px;font-size:13px;position:relative;}
+  .note-del{position:absolute;right:8px;top:8px;background:none;border:none;color:var(--rojo);cursor:pointer;}
+  textarea{width:100%;padding:10px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;margin-bottom:8px;background:var(--panel);color:var(--texto);}
+  .schedule{background:var(--panel);border:1px solid var(--borde);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+  .sched-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--borde);font-size:13px;}
+  .sched-row:last-child{border-bottom:none;}
+  .sched-time{flex-shrink:0;width:56px;font-weight:700;color:var(--caramelo);font-size:12px;}
+  .sched-title{flex:1;}
+  .sched-total{background:var(--caramelo);color:#241914;text-align:center;padding:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<noscript><style>#splash{display:none!important}#app{display:block!important}.modulo{display:block!important}</style><div style="position:relative;z-index:99999;background:#c0392b;color:#fff;padding:14px;font:600 14px/1.4 sans-serif;text-align:center">JavaScript está desactivado. Esta vista previa (Archivos, WhatsApp, Correo) no permite botones: abre el enlace en Safari para usar el curso completo.</div></noscript>
+
+<div id="splash">
+  <div class="splash-icon">🪵</div>
+  <div class="splash-title">Carpintería Intermedia<br>Curso de 8 Horas</div>
+  <div class="splash-sub">Ebanistería, máquinas y muebles funcionales</div>
+  <div class="splash-badge">
+    <span class="badge">7 Módulos · 8 Horas</span>
+    <span class="badge">Quizzes</span>
+    <span class="badge">Proyecto: Cajón Funcional</span>
+  </div>
+  <button class="btn-start" onclick="iniciarCurso()">Comenzar Curso</button>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <div class="header-logo">⚙️ Carp. Intermedia</div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="toggleBusqueda()">🔎</button>
+      <button class="icon-btn" onclick="mostrarLogros()">🏆</button>
+      <button class="icon-btn" onclick="if(typeof CertificadoModule!=='undefined'){CertificadoModule.generar('intermedio')}else{alert('El certificado no está disponible en este archivo')}" title="Generar certificado">🎓</button>
+      <div class="header-progress">
+        <span id="progress-text">0%</span>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar" id="search-bar">
+    <input type="text" id="search-input" placeholder="Buscar en el curso...">
+    <button class="icon-btn" onclick="limpiarBusqueda()">✕</button>
+  </div>
+
+  <div class="nav-modulos">
+    <button class="nav-mod-btn active" onclick="irModulo(0)">Inicio</button>
+    <button class="nav-mod-btn" onclick="irModulo(1)">1. Uniones</button>
+    <button class="nav-mod-btn" onclick="irModulo(2)">2. Máquinas</button>
+    <button class="nav-mod-btn" onclick="irModulo(3)">3. Planos</button>
+    <button class="nav-mod-btn" onclick="irModulo(4)">4. Cajones/Puertas</button>
+    <button class="nav-mod-btn" onclick="irModulo(5)">5. Enchapado</button>
+    <button class="nav-mod-btn" onclick="irModulo(6)">6. Acabados</button>
+    <button class="nav-mod-btn" onclick="irModulo(7)">7. Costos</button>
+    <button class="nav-mod-btn" onclick="irVista('notas')">📝 Notas</button>
+  </div>
+
+  <div class="content-area">
+
+    <!-- INICIO -->
+    <div id="sec-indice" class="modulo active">
+      <div class="mod-hero">
+        <div class="mod-num">Bienvenida</div>
+        <div class="mod-title">Da el salto a la <span style="color:var(--caramelo)">ebanistería</span></div>
+        <div class="mod-desc">Curso de 8 horas basado en programas reales de formación en carpintería-ebanistería: uniones avanzadas, máquinas eléctricas, planos técnicos, muebles con cajones y puertas, enchapado, acabados y costeo de proyectos.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Horario del curso (8 horas)</h3>
+          <div class="schedule">
+            <div class="sched-row"><div class="sched-time">75 min</div><div class="sched-title">1. Uniones de Ebanistería</div></div>
+            <div class="sched-row"><div class="sched-time">75 min</div><div class="sched-title">2. Máquinas Eléctricas</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">3. Lectura de Planos y Despiece</div></div>
+            <div class="sched-row"><div class="sched-time">90 min</div><div class="sched-title">4. Construcción de Cajones y Puertas</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">5. Enchapado y Contrachapado</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">6. Acabados Intermedios</div></div>
+            <div class="sched-row"><div class="sched-time">60 min</div><div class="sched-title">7. Cálculo de Materiales y Costos</div></div>
+            <div class="sched-total">TOTAL: 8 HORAS</div>
+          </div>
+          <p style="margin-top:10px;font-size:13px;color:var(--gris);">Cada módulo indica el tiempo estimado por sección (⏱). Este curso asume que ya dominas seguridad básica, tipos de madera, herramientas manuales, medición simple y uniones con clavos/tornillos/cola (nivel básico).</p>
+        </div>
+        <div class="card">
+          <h3>¿Qué vas a lograr?</h3>
+          <ul>
+            <li>Ejecutar uniones de cola de milano, espiga y caja, y a media madera.</li>
+            <li>Operar con seguridad sierra circular, sierra de cinta, cepilladora y router/fresadora.</li>
+            <li>Leer e interpretar planos de despiece con cotas, escalas y simbología.</li>
+            <li>Construir cajones funcionales con guías y puertas de marco y panel.</li>
+            <li>Enchapar superficies con chapa de madera sobre tableros económicos.</li>
+            <li>Aplicar tintes, barniz y laca con un acabado de nivel profesional.</li>
+            <li>Calcular el costo real de un proyecto y fijar un precio de venta correcto.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Proyecto integrador: cajón funcional</h3>
+          <p>A lo largo del curso construirás un cajón con guías, aplicando uniones de ebanistería, lectura de plano, y un acabado de nivel intermedio: la pieza que resume el salto de "hacer una caja" a "hacer un mueble funcional".</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULO 1: UNIONES -->
+    <div id="modulo-1" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 1 de 7</span><span class="mod-time">⏱ 75 min</span></div>
+        <div class="mod-title">Uniones de <span style="color:var(--caramelo)">Ebanistería</span></div>
+        <div class="mod-desc">Cola de milano, espiga y caja, y unión a media madera: la base del mueble sólido.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <button class="fav-btn" onclick="toggleFavorito('m1c1')" id="fav-m1c1" style="float:right;">☆</button>
+          <h3>Cola de milano (dovetail) <span class="card-time">15 min</span></h3>
+          <p>Unión de esquina clásica en cajones finos, extremadamente resistente a la tracción por su forma trapezoidal: mientras más se tira de la unión, más se traba. Se corta manualmente con serrucho de costilla y formón, o con router y plantilla para mayor velocidad y repetibilidad.</p>
+          <div class="subh">Proceso manual básico</div>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Marca las colas (la pieza con la forma trapezoidal visible) con gramil y falsa escuadra.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Corta con serrucho de costilla justo al borde de la línea, dejando el trazo visible.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Vacía el material entre colas con formón, trabajando desde ambos lados hacia el centro.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Usa la primera pieza terminada como plantilla para trazar las espigas (pines) de la segunda.</div></div>
+        </div>
+        <div class="card">
+          <h3>Espiga y caja (mortise & tenon) <span class="card-time">18 min</span></h3>
+          <p>La unión estructural más usada en mesas, sillas y marcos. La espiga (macho) encaja en la caja (hembra) y se fija con cola, a veces reforzada con una clavija de madera atravesada.</p>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Marca la caja con gramil, con un tercio del grosor de la pieza como referencia general.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Vacía la caja con formón o fresadora, revisando la profundidad con frecuencia.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Corta la espiga a medida, con un ligero achaflanado en la punta para facilitar el ensamble.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Prueba en seco (sin cola) antes de encolar definitivamente; ajusta con formón si está demasiado ajustada.</div></div>
+        </div>
+        <div class="card">
+          <h3>Unión a media madera (lap joint) <span class="card-time">10 min</span></h3>
+          <p>Se rebaja la mitad del grosor en cada pieza para que encajen a ras, quedando ambas caras a nivel. Sencilla y resistente, común en marcos, estructuras de soporte y cruces de piezas.</p>
+          <div class="tip">💡 Para quienes recién llegan a la ebanistería, la unión a media madera es el mejor punto de partida antes de intentar la cola de milano, que exige más precisión.</div>
+        </div>
+        <div class="card">
+          <h3>Comparativa de uniones de ebanistería <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Unión</th><th>Dificultad</th><th>Resistencia</th><th>Uso típico</th></tr>
+            <tr><td>Media madera</td><td>Baja</td><td>Media</td><td>Marcos, cruces estructurales</td></tr>
+            <tr><td>Espiga y caja</td><td>Media</td><td>Alta</td><td>Mesas, sillas, marcos de puerta</td></tr>
+            <tr><td>Cola de milano</td><td>Alta</td><td>Muy alta (a tracción)</td><td>Cajones finos, esquinas visibles</td></tr>
+            <tr><td>Caja y espiga ciega</td><td>Media-alta</td><td>Alta</td><td>Uniones donde no debe verse la espiga</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Herramientas específicas de ebanistería <span class="card-time">12 min</span></h3>
+          <ul>
+            <li><strong>Serrucho de costilla:</strong> hoja reforzada para cortes finos y precisos en uniones.</li>
+            <li><strong>Gramil:</strong> traza líneas paralelas a un borde con precisión constante, esencial para marcar cajas y espigas.</li>
+            <li><strong>Formones de varios anchos:</strong> permiten vaciar cajas y ajustar colas de milano según el tamaño de la pieza.</li>
+            <li><strong>Escofinas y limas:</strong> ajustan y suavizan uniones que quedaron ligeramente apretadas.</li>
+            <li><strong>Sargentos de ebanista (barriletes):</strong> mayor alcance y presión que las prensas básicas, necesarios para piezas de mueble completas.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Calibrar el gramil correctamente <span class="card-time">8 min</span></h3>
+          <p>Antes de marcar, ajusta el tope del gramil a la distancia deseada y verifica sobre un retazo de madera de descarte, no directamente en tu pieza final. Para cajas y espigas, marca siempre desde la misma cara de referencia en todas las piezas relacionadas, para que cualquier pequeña imprecisión del gramil sea consistente entre las piezas y no se note en el ensamble.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de espiga según el mueble <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo de espiga</th><th>Característica</th><th>Uso típico</th></tr>
+            <tr><td>Espiga pasante</td><td>Atraviesa toda la pieza receptora, visible por el otro lado</td><td>Piezas rústicas, estilo japonés</td></tr>
+            <tr><td>Espiga ciega</td><td>No atraviesa, queda oculta</td><td>Muebles finos donde no debe verse la unión</td></tr>
+            <tr><td>Espiga con hombros</td><td>Reborde que tapa la caja por fuera</td><td>Marcos de puerta y ventana</td></tr>
+            <tr><td>Espiga múltiple</td><td>Varias espigas pequeñas en una misma unión</td><td>Piezas anchas que requieren más superficie de cola</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Solución de problemas en uniones <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>La cola de milano queda floja:</strong> ajusta con formón el ángulo de las colas, nunca las espigas (pines), que son más difíciles de corregir.</li>
+            <li><strong>La espiga entra demasiado apretada y se raja la caja:</strong> lija ligeramente los cantos de la espiga en vez de forzarla a golpes.</li>
+            <li><strong>La unión a media madera no queda a ras:</strong> revisa que ambos rebajes tengan exactamente la mitad del grosor; usa un calibre o pie de rey para verificar antes de encolar.</li>
+            <li><strong>Las diagonales de un marco no coinciden tras encolar:</strong> corrige de inmediato con un sargento colocado en diagonal mientras la cola sigue fresca; después de curada, la corrección requiere desarmar la unión.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Glosario de ebanistería <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Cola (en dovetail):</strong> la pieza trapezoidal más ancha de una unión de cola de milano.</li>
+            <li><strong>Espiga/pin:</strong> la pieza más angosta que encaja entre las colas.</li>
+            <li><strong>Hombro:</strong> la superficie plana perpendicular a una espiga que topa contra la pieza receptora.</li>
+            <li><strong>Achaflanado:</strong> pequeño bisel en un borde o punta para facilitar el ensamble o suavizar una arista.</li>
+            <li><strong>Barrilete/sargento de ebanista:</strong> prensa de mayor recorrido usada para piezas de mueble completas.</li>
+          </ul>
+        </div>
+        <div id="quiz-m1"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 2: MAQUINAS -->
+    <div id="modulo-2" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 2 de 7</span><span class="mod-time">⏱ 75 min</span></div>
+        <div class="mod-title">Máquinas <span style="color:var(--caramelo)">Eléctricas</span></div>
+        <div class="mod-desc">Sierra circular, sierra de cinta, cepilladora y router: úsalas con precisión y seguridad.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Sierra circular de mesa (table saw) <span class="card-time">18 min</span></h3>
+          <ul>
+            <li>Usa siempre el empujador (push stick) en cortes angostos.</li>
+            <li>Ajusta la guía paralela antes de encender la máquina, nunca en movimiento.</li>
+            <li>Nunca retires el protector de disco salvo procedimientos específicos con capacitación certificada.</li>
+            <li>Verifica que el disco esté correctamente alineado con la ranura de la mesa antes de cada sesión.</li>
+          </ul>
+          <div class="warn">⚠️ La mayoría de accidentes graves en taller involucran la sierra de mesa por retroceso (kickback). Mantén las manos alejadas de la línea de corte y nunca te coloques directamente detrás del disco.</div>
+        </div>
+        <div class="card">
+          <h3>Sierra de cinta (band saw) <span class="card-time">14 min</span></h3>
+          <p>Ideal para cortes curvos, resortes de madera y despiece de tablones gruesos gracias a su hoja continua y delgada. Es más segura que la sierra circular por el bajo riesgo de retroceso, pero requiere tensión correcta de la hoja y una guía ajustada cerca de la pieza.</p>
+        </div>
+        <div class="card">
+          <h3>Cepilladora (planer/jointer) <span class="card-time">15 min</span></h3>
+          <p>Permite dejar una cara de la tabla perfectamente plana (jointer) y luego calibrar el grosor de forma uniforme en toda la pieza (planer/cepilladora de espesor). Es la máquina que transforma madera "en bruto" comprada del aserradero en tablas listas para trabajar con precisión.</p>
+          <div class="tip">💡 Siempre cepilla primero una cara de referencia plana antes de calibrar el grosor; si empiezas por el grosor sin una cara plana, la pieza terminada seguirá torcida.</div>
+        </div>
+        <div class="card">
+          <h3>Router / Fresadora <span class="card-time">14 min</span></h3>
+          <p>Ideal para molduras, rebajes, plantillas de cola de milano y acabado de bordes. Trabaja siempre en contra de la rotación de la broca (de izquierda a derecha en el borde exterior de la pieza, visto desde arriba) para evitar que la máquina "muerda" y se desplace sola.</p>
+        </div>
+        <div class="card">
+          <h3>Mantenimiento de máquinas <span class="card-time">8 min</span></h3>
+          <ul>
+            <li>Limpia el polvo acumulado en motores y ventilaciones para evitar sobrecalentamiento.</li>
+            <li>Revisa la tensión de bandas y cadenas según el manual de cada máquina.</li>
+            <li>Cambia o afila discos y hojas cuando notes que "queman" la madera en vez de cortarla limpio.</li>
+            <li>Lubrica rieles y guías deslizantes periódicamente para mantener precisión.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Qué máquina usar según la tarea <span class="card-time">6 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tarea</th><th>Máquina recomendada</th></tr>
+            <tr><td>Cortes rectos repetitivos</td><td>Sierra circular de mesa</td></tr>
+            <tr><td>Cortes curvos o despiece de tablones</td><td>Sierra de cinta</td></tr>
+            <tr><td>Aplanar y calibrar tablas</td><td>Cepilladora</td></tr>
+            <tr><td>Molduras, rebajes, plantillas</td><td>Router/fresadora</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Elegir el disco/hoja según el corte <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo de disco</th><th>Dientes</th><th>Uso</th></tr>
+            <tr><td>Corte rápido (rip)</td><td>Pocos (10-24)</td><td>Cortes a lo largo de la veta, avance rápido</td></tr>
+            <tr><td>Corte transversal (crosscut)</td><td>Muchos (60-80)</td><td>Cortes limpios contra la veta, acabado fino</td></tr>
+            <tr><td>Combinado</td><td>Medio (40-50)</td><td>Uso general cuando no quieres cambiar de disco seguido</td></tr>
+            <tr><td>Para contrachapado/melamina</td><td>Muy finos (80-100)</td><td>Minimiza el astillado en tableros enchapados</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Checklist de seguridad antes de encender una máquina <span class="card-time">8 min</span></h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Protector de disco/hoja instalado y funcional</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Guía paralela o tope ajustado y asegurado</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Empujador (push stick) a la mano para cortes angostos</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Área de salida de la pieza despejada</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Protección auditiva y ocular puestas</div>
+        </div>
+        <div class="card">
+          <h3>Glosario de máquinas <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Kickback (retroceso):</strong> lanzamiento brusco de la pieza hacia el operario, generalmente por atasco entre el disco y la guía.</li>
+            <li><strong>Kerf:</strong> el ancho de material que elimina la hoja de sierra al cortar.</li>
+            <li><strong>Jointer/cepillo de bancada:</strong> máquina que deja una cara o canto perfectamente plano de referencia.</li>
+            <li><strong>Planer/cepillo de espesor:</strong> máquina que calibra el grosor final de la tabla de forma uniforme.</li>
+            <li><strong>RPM:</strong> revoluciones por minuto; velocidad de giro del disco, broca o fresa.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Errores comunes de principiante en máquinas <span class="card-time">6 min</span></h3>
+          <ul>
+            <li>Forzar el avance en vez de dejar que la máquina corte a su ritmo, lo que quema la madera y desgasta el disco.</li>
+            <li>No revisar la escuadra del disco contra la mesa antes de empezar, generando cortes fuera de ángulo.</li>
+            <li>Cambiar de tarea sin reajustar guías, usando la configuración de un corte anterior distinto.</li>
+          </ul>
+        </div>
+        <div id="quiz-m2"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 3: PLANOS -->
+    <div id="modulo-3" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 3 de 7</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Lectura de <span style="color:var(--caramelo)">Planos y Despiece</span></div>
+        <div class="mod-desc">Interpreta cotas, escalas y listas de corte antes de tocar la madera.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Elementos de un plano técnico <span class="card-time">15 min</span></h3>
+          <ul>
+            <li><strong>Vistas:</strong> planta, alzado y perfil muestran el mueble desde distintos ángulos, siguiendo normas de representación gráfica.</li>
+            <li><strong>Cotas:</strong> medidas exactas de cada elemento, en mm o cm, con líneas de referencia y flechas.</li>
+            <li><strong>Escala:</strong> relación entre el dibujo y el tamaño real (ej. 1:10).</li>
+            <li><strong>Simbología:</strong> símbolos normalizados para indicar tipo de unión, tipo de madera o acabado sin escribir texto largo en cada pieza.</li>
+            <li><strong>Tolerancias:</strong> margen de error aceptable en una medida (ej. ±0.5mm), relevante en piezas que deben encajar con herrajes.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Lista de despiece (cutting list) <span class="card-time">15 min</span></h3>
+          <table class="tabla">
+            <tr><th>Pieza</th><th>Cant.</th><th>Largo</th><th>Ancho</th><th>Grosor</th></tr>
+            <tr><td>Lateral</td><td>2</td><td>700mm</td><td>400mm</td><td>18mm</td></tr>
+            <tr><td>Base</td><td>1</td><td>764mm</td><td>400mm</td><td>18mm</td></tr>
+            <tr><td>Tapa</td><td>1</td><td>800mm</td><td>420mm</td><td>18mm</td></tr>
+          </table>
+          <div class="tip">💡 Siempre organiza la lista de despiece antes de cortar: optimiza el uso del tablero y evita errores costosos en piezas de madera cara.</div>
+        </div>
+        <div class="card">
+          <h3>Órdenes de fabricación y montaje <span class="card-time">10 min</span></h3>
+          <p>En un taller profesional, la orden de fabricación acompaña a la lista de despiece con instrucciones específicas: secuencia de mecanizado, tipo de unión por pieza, y notas de control de calidad. Aunque trabajes solo, adoptar este hábito (escribir el orden de pasos antes de empezar) reduce errores en proyectos con varias piezas similares.</p>
+        </div>
+        <div class="card">
+          <h3>Optimización de corte (nesting) <span class="card-time">12 min</span></h3>
+          <p>Antes de comprar tableros, dibuja el acomodo de todas tus piezas sobre las dimensiones estándar del tablero (ej. 244x122cm) para minimizar el desperdicio. Deja siempre unos milímetros de margen entre piezas para el grosor de la hoja de sierra (kerf), y agrupa piezas de tamaño similar para aprovechar mejor los recortes.</p>
+        </div>
+        <div class="card">
+          <h3>Control de calidad de componentes <span class="card-time">8 min</span></h3>
+          <p>Antes de ensamblar, inspecciona cada pieza cortada: verifica medidas contra la lista de despiece, revisa escuadrado en las esquinas, y confirma que no haya defectos visibles en las caras que quedarán expuestas. Detectar un error antes del ensamble es mucho más fácil de corregir que después.</p>
+        </div>
+        <div class="card">
+          <h3>Simbología común en planos de mueble <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Línea continua gruesa:</strong> contorno visible de la pieza.</li>
+            <li><strong>Línea discontinua:</strong> aristas o elementos ocultos detrás de otra pieza.</li>
+            <li><strong>Línea de cota con flechas:</strong> indica el rango exacto que mide esa dimensión.</li>
+            <li><strong>Círculo con cruz:</strong> punto de perforación para herrajes o clavijas.</li>
+            <li><strong>Símbolo de veta:</strong> flecha o línea diagonal que indica la dirección de la fibra de la madera en esa pieza.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Ejercicio práctico: de plano a lista de corte <span class="card-time">15 min</span></h3>
+          <p>Toma como ejemplo un mueble sencillo: una repisa con dos divisiones internas. Descompón mentalmente el mueble en piezas: 2 laterales, 1 base, 1 tapa y 2 divisiones. Para cada una, anota largo, ancho y grosor, y decide el orden de mecanizado (por ejemplo: primero laterales con sus rebajos, después base y tapa, finalmente las divisiones a medida exacta del hueco resultante). Este ejercicio mental, hecho siempre antes de cortar, es lo que distingue un despiece profesional de uno improvisado.</p>
+        </div>
+        <div class="card">
+          <h3>Errores comunes al leer o hacer planos <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>Confundir medida interior con medida exterior:</strong> especialmente en piezas con rebajos o ranuras; siempre aclara a qué borde se refiere cada cota.</li>
+            <li><strong>No indicar la dirección de la veta:</strong> genera piezas estructuralmente débiles si la fibra queda en la dirección incorrecta.</li>
+            <li><strong>Omitir el grosor de la hoja de sierra (kerf) en el nesting:</strong> hace que el plan de corte "no cuadre" al ejecutarlo en el taller.</li>
+            <li><strong>No marcar qué cara de cada pieza es la que queda visible:</strong> provoca inconsistencias de veta o de defectos en el mueble terminado.</li>
+          </ul>
+        </div>
+        <div id="quiz-m3"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 4: CAJONES/PUERTAS -->
+    <div id="modulo-4" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 4 de 7</span><span class="mod-time">⏱ 90 min</span></div>
+        <div class="mod-title">Construcción de <span style="color:var(--caramelo)">Cajones y Puertas</span></div>
+        <div class="mod-desc">Los dos elementos que definen la funcionalidad de un mueble.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Anatomía de un cajón funcional <span class="card-time">10 min</span></h3>
+          <p>Un cajón se compone de frente, laterales, trasera y fondo. El frente suele ser más grueso y de mejor acabado (es lo que se ve), mientras que laterales y trasera pueden ser de un material más económico si van ocultos dentro del mueble.</p>
+        </div>
+        <div class="card">
+          <h3>Construcción paso a paso <span class="card-time">30 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Define la holgura: 1-1.5mm por lado respecto al hueco del mueble donde irá el cajón (≈5 min).</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Corta laterales, frente, trasera según tu lista de despiece (≈5 min).</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Ensambla las esquinas con cola de milano o con ranura y espiga, según el nivel de acabado deseado (≈10 min).</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Encaja el fondo en una ranura practicada en laterales, frente y trasera; no lo claves ni lo encoles, debe poder "flotar" con el movimiento natural de la madera (≈5 min).</div></div>
+          <div class="paso"><div class="paso-num">5</div><div class="paso-text">Instala guías telescópicas metálicas o corredera de madera según el diseño y el peso que soportará el cajón (≈5 min).</div></div>
+        </div>
+        <div class="card">
+          <h3>Tipos de guías para cajones <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo</th><th>Ventaja</th><th>Cuándo usar</th></tr>
+            <tr><td>Corredera de madera</td><td>Económica, estética tradicional</td><td>Muebles rústicos o de estilo clásico</td></tr>
+            <tr><td>Guía telescópica estándar</td><td>Deslizamiento suave, bajo costo</td><td>Uso doméstico general</td></tr>
+            <tr><td>Guía de cierre suave (soft-close)</td><td>No golpea al cerrar, mayor durabilidad</td><td>Cocinas y muebles de uso frecuente</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Puertas de marco y panel <span class="card-time">20 min</span></h3>
+          <p>Las puertas de marco y panel usan montantes (verticales) y travesaños (horizontales) unidos por espiga, con un panel central que "flota" en una ranura sin encolar, permitiendo el movimiento natural de la madera sin que la puerta se agriete o deforme.</p>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Corta montantes y travesaños según tu lista de despiece.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Practica la ranura perimetral para el panel en el canto interno de cada pieza del marco.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Corta las espigas en los extremos de los travesaños para encajar en los montantes.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Ensambla en seco, verifica escuadrado, e inserta el panel antes de encolar definitivamente las esquinas.</div></div>
+          <div class="tip">💡 Deja siempre 2-3mm de holgura entre puerta y marco del mueble para evitar roces por dilatación de la madera según la humedad ambiental.</div>
+        </div>
+        <div class="card">
+          <h3>Instalación de bisagras <span class="card-time">14 min</span></h3>
+          <p>Las bisagras ocultas (tipo copa) son las más usadas en muebles modernos: requieren una perforación circular de diámetro específico (normalmente 35mm) en el canto interno de la puerta, y una placa de montaje atornillada al costado del mueble. Ajusta la profundidad, altura y lateralidad de la puerta con los tornillos de regulación de la bisagra, sin necesidad de volver a taladrar.</p>
+        </div>
+        <div class="card">
+          <h3>Tipos de bisagra según el mueble <span class="card-time">10 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo</th><th>Apertura</th><th>Uso típico</th></tr>
+            <tr><td>Bisagra de copa (oculta)</td><td>95°-165° según modelo</td><td>Muebles modernos de cocina y closet</td></tr>
+            <tr><td>Bisagra de piano</td><td>180°, a lo largo de todo el canto</td><td>Tapas grandes, cajas, baúles</td></tr>
+            <tr><td>Bisagra de mariposa</td><td>180°</td><td>Puertas de estilo rústico o visible</td></tr>
+            <tr><td>Bisagra invisible</td><td>180°</td><td>Puertas donde no debe verse ningún herraje</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Presupuesto orientativo de herrajes <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Herraje</th><th>Costo relativo</th></tr>
+            <tr><td>Guía telescópica estándar (par)</td><td>$</td></tr>
+            <tr><td>Guía de cierre suave (par)</td><td>$$</td></tr>
+            <tr><td>Bisagra de copa (unidad)</td><td>$</td></tr>
+            <tr><td>Tirador o manija</td><td>$</td></tr>
+          </table>
+          <p style="margin-top:8px;">Los herrajes suelen representar una parte significativa del costo total en muebles con varios cajones o puertas; inclúyelos siempre en tu presupuesto desde el diseño inicial, no como un gasto "extra" de último momento.</p>
+        </div>
+        <div class="card">
+          <h3>Checklist de instalación de cajones y puertas <span class="card-time">8 min</span></h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Holgura del cajón verificada (1-1.5mm por lado)</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Guías niveladas y paralelas entre sí</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Puerta con holgura de 2-3mm respecto al marco</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Bisagras alineadas y ajustadas (profundidad, altura, lateral)</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Cajón y puerta se mueven sin rozar en todo su recorrido</div>
+        </div>
+        <div class="card">
+          <h3>Errores comunes en cajones y puertas <span class="card-time">6 min</span></h3>
+          <ul>
+            <li><strong>Cajón que se traba a medio recorrido:</strong> guías no paralelas entre sí; revisa la instalación en ambos costados con el mismo punto de referencia.</li>
+            <li><strong>Puerta que no cierra pareja:</strong> bisagras no alineadas a la misma altura o marco fuera de escuadra.</li>
+            <li><strong>Panel de puerta que se agrieta con el tiempo:</strong> panel encolado en la ranura en vez de dejarlo "flotar" libremente.</li>
+          </ul>
+        </div>
+        <div id="quiz-m4"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 5: ENCHAPADO -->
+    <div id="modulo-5" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 5 de 7</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Enchapado y <span style="color:var(--caramelo)">Contrachapado</span></div>
+        <div class="mod-desc">Dale apariencia de madera maciza a un tablero económico.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>¿Qué es la chapa de madera? <span class="card-time">8 min</span></h3>
+          <p>Una lámina fina (0.5-0.6mm) de madera noble que se adhiere sobre un sustrato como MDF o contrachapado, logrando la apariencia de madera maciza a menor costo y con mayor estabilidad dimensional que la madera maciza en piezas grandes.</p>
+        </div>
+        <div class="card">
+          <h3>Proceso básico de enchapado <span class="card-time">20 min</span></h3>
+          <div class="paso"><div class="paso-num">1</div><div class="paso-text">Corta la chapa con 1-2cm de margen sobre el sustrato en todos los bordes.</div></div>
+          <div class="paso"><div class="paso-num">2</div><div class="paso-text">Aplica cola de contacto o cola blanca uniformemente en ambas superficies, según el tipo de cola elegido.</div></div>
+          <div class="paso"><div class="paso-num">3</div><div class="paso-text">Prensa con rodillo o prensa de vacío, trabajando del centro hacia los bordes para eliminar burbujas de aire.</div></div>
+          <div class="paso"><div class="paso-num">4</div><div class="paso-text">Recorta los sobrantes con cutter afilado o router con broca de ras (flush trim).</div></div>
+          <div class="warn">⚠️ Enchapa ambas caras del tablero (aunque una no se vea) para evitar que se alabee por tensión desigual entre una cara enchapada y otra desnuda.</div>
+        </div>
+        <div class="card">
+          <h3>Unión de láminas de chapa (bookmatch) <span class="card-time">12 min</span></h3>
+          <p>Cuando necesitas cubrir una superficie más ancha que una sola lámina de chapa, puedes unir dos láminas consecutivas del mismo tronco "en espejo" (bookmatch), logrando un patrón de veta simétrico muy decorativo. Une los bordes con cinta especial para chapa antes de pegar sobre el sustrato.</p>
+        </div>
+        <div class="card">
+          <h3>Contrachapado: cómo elegir el grado <span class="card-time">12 min</span></h3>
+          <table class="tabla">
+            <tr><th>Grado</th><th>Características</th><th>Uso típico</th></tr>
+            <tr><td>A/A (ambas caras buenas)</td><td>Sin defectos visibles en ninguna cara</td><td>Piezas donde se ven ambos lados</td></tr>
+            <tr><td>A/B</td><td>Una cara sin defectos, otra con mínimos</td><td>Puertas, laterales visibles por un lado</td></tr>
+            <tr><td>B/C o inferior</td><td>Defectos visibles, uso estructural</td><td>Fondos, piezas ocultas</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Problemas comunes al enchapar <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Burbujas de aire:</strong> presión insuficiente o cola aplicada de forma desigual; repite el prensado con más presión o más cola en la zona afectada.</li>
+            <li><strong>Chapa que se levanta en los bordes:</strong> falta de cola en el borde exacto; refuerza con una gota de cola inyectada y presión localizada.</li>
+            <li><strong>Grietas en la chapa al secar:</strong> chapa demasiado seca o quebradiza; humedece ligeramente antes de aplicar en climas muy secos.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cola de contacto vs. cola blanca para enchapar <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Adhesivo</th><th>Ventaja</th><th>Desventaja</th></tr>
+            <tr><td>Cola de contacto</td><td>Presa instantánea, no requiere prensa larga</td><td>Sin margen de ajuste; un error de posición es definitivo</td></tr>
+            <tr><td>Cola blanca (PVA)</td><td>Permite reposicionar unos segundos, económica</td><td>Requiere prensado prolongado (rodillo o prensa de vacío)</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Herramientas específicas para enchapado <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Rodillo de enchapar:</strong> aplica presión uniforme sobre la chapa para eliminar burbujas de aire.</li>
+            <li><strong>Cinta para chapa (veneer tape):</strong> une temporalmente los bordes de dos láminas antes de pegarlas al sustrato.</li>
+            <li><strong>Router con broca de ras (flush trim):</strong> recorta el sobrante de chapa exactamente al borde del sustrato.</li>
+            <li><strong>Prensa de vacío:</strong> para proyectos frecuentes, ofrece presión uniforme en toda la superficie, incluso en piezas curvas.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cuidado y almacenamiento de la chapa <span class="card-time">6 min</span></h3>
+          <p>Guarda las láminas de chapa planas, entre dos tableros rígidos que eviten que se curven o se quiebren, y en un ambiente con humedad estable. La chapa reseca se vuelve quebradiza y difícil de trabajar; si notas que se agrieta al manipularla, humedece ligeramente el reverso con un paño húmedo unos minutos antes de aplicarla.</p>
+        </div>
+        <div id="quiz-m5"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 6: ACABADOS -->
+    <div id="modulo-6" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 6 de 7</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Acabados <span style="color:var(--caramelo)">Intermedios</span></div>
+        <div class="mod-desc">Tinte, barniz y laca para un resultado de nivel profesional.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Tintes <span class="card-time">12 min</span></h3>
+          <p>Modifican el color de la madera sin ocultar la veta. Se aplican con paño o brocha, siempre haciendo una prueba en un recorte de la misma madera antes de aplicar al proyecto final, ya que cada especie de madera absorbe el tinte de forma distinta.</p>
+          <div class="subh">Tipos comunes</div>
+          <ul>
+            <li><strong>Tinte al agua:</strong> bajo olor, seca rápido, puede levantar ligeramente la fibra de la madera.</li>
+            <li><strong>Tinte al aceite:</strong> penetra más profundo, tiempo de trabajo más largo, olor más fuerte.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Barniz poliuretano <span class="card-time">14 min</span></h3>
+          <p>Alta resistencia a rayones y humedad. Se aplica en 2-3 capas delgadas, lijando ligeramente (grano 320) entre capas para mejor adherencia y para eliminar el "pelo" que levanta la primera mano.</p>
+        </div>
+        <div class="card">
+          <h3>Laca nitrocelulósica <span class="card-time">14 min</span></h3>
+          <p>Secado ultra rápido, acabado profesional, normalmente aplicada con pistola de aire. Requiere buena ventilación y varias manos finas; es el acabado más usado en talleres de producción por su rapidez de secado entre manos.</p>
+          <div class="tip">💡 Nunca satures la primera mano: en acabados, "menos es más" — varias capas finas superan a una gruesa, tanto en durabilidad como en apariencia.</div>
+        </div>
+        <div class="card">
+          <h3>Comparativa de acabados intermedios <span class="card-time">12 min</span></h3>
+          <table class="tabla">
+            <tr><th>Acabado</th><th>Secado</th><th>Resistencia</th><th>Aplicación</th></tr>
+            <tr><td>Tinte + barniz al agua</td><td>Rápido</td><td>Media-alta</td><td>Brocha o paño</td></tr>
+            <tr><td>Barniz poliuretano</td><td>Medio</td><td>Alta</td><td>Brocha o rodillo</td></tr>
+            <tr><td>Laca nitrocelulósica</td><td>Muy rápido</td><td>Media-alta</td><td>Pistola</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Problemas comunes de acabado <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Manchas irregulares de tinte:</strong> suelen deberse a lijado desigual o a maderas con veta muy variable (como el pino); una capa previa de "sellador condicionador" ayuda a uniformizar la absorción.</li>
+            <li><strong>Laca con textura de piel de naranja:</strong> presión de pistola incorrecta o distancia de aplicación inadecuada; ajusta según la ficha técnica del producto.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Tiempos de secado orientativos <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Producto</th><th>Seco al tacto</th><th>Listo para repintar</th></tr>
+            <tr><td>Tinte al agua</td><td>30-60 min</td><td>2-4 horas</td></tr>
+            <tr><td>Barniz poliuretano</td><td>2-4 horas</td><td>6-24 horas</td></tr>
+            <tr><td>Laca nitrocelulósica</td><td>15-30 min</td><td>30-60 min</td></tr>
+          </table>
+          <p style="margin-top:8px;color:var(--gris);font-size:12px;">Los tiempos varían según humedad, temperatura y ventilación del ambiente; usa siempre la ficha técnica del fabricante como referencia principal.</p>
+        </div>
+        <div class="card">
+          <h3>Protección personal al aplicar acabados <span class="card-time">8 min</span></h3>
+          <p>Los solventes de barnices y lacas liberan vapores que no deben inhalarse en espacios cerrados. Usa mascarilla con filtro para vapores orgánicos (no solo mascarilla de polvo) al aplicar productos a base de solvente, trabaja con ventilación cruzada, y evita fuentes de chispa o fuego cerca de productos inflamables como la laca nitrocelulósica.</p>
+        </div>
+        <div class="card">
+          <h3>Preguntas frecuentes de acabados intermedios <span class="card-time">10 min</span></h3>
+          <p><strong>¿Puedo mezclar distintas marcas de barniz entre capas?</strong> No es recomendable; las formulaciones pueden no ser compatibles y causar problemas de adherencia. Usa la misma línea de producto en todas las capas.</p>
+          <p><strong>¿Por qué mi laca queda opaca en vez de brillante?</strong> Suele deberse a exceso de humedad ambiental durante la aplicación ("blushing"), que atrapa humedad en la película. Aplica en ambientes secos o usa un aditivo retardante en climas húmedos.</p>
+          <p><strong>¿Cuándo conviene usar tinte antes que aplicar directamente el barniz?</strong> Cuando quieres modificar el color de la madera manteniendo la veta visible; si te gusta el color natural de la especie, puedes saltar el tinte y aplicar barniz o laca directamente.</p>
+        </div>
+        <div id="quiz-m6"></div>
+      </div>
+    </div>
+
+    <!-- MODULO 7: COSTOS -->
+    <div id="modulo-7" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num"><span>Módulo 7 de 7</span><span class="mod-time">⏱ 60 min</span></div>
+        <div class="mod-title">Cálculo de <span style="color:var(--caramelo)">Materiales y Costos</span></div>
+        <div class="mod-desc">De hobby a negocio: aprende a costear tus proyectos correctamente.</div>
+      </div>
+      <div class="mod-body">
+        <div class="card">
+          <h3>Componentes del costo <span class="card-time">14 min</span></h3>
+          <ul>
+            <li><strong>Materiales:</strong> madera, tableros, herrajes, cola, lijas, acabado.</li>
+            <li><strong>Mano de obra:</strong> horas invertidas × valor de tu hora, incluyendo diseño y no solo el tiempo de taller.</li>
+            <li><strong>Desgaste de herramientas:</strong> un porcentaje fijo por proyecto para cubrir el reemplazo futuro de consumibles y maquinaria.</li>
+            <li><strong>Margen de ganancia:</strong> normalmente 20-40% sobre el costo total, según el mercado y la exclusividad de la pieza.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Optimización de corte y desperdicio <span class="card-time">12 min</span></h3>
+          <p>Antes de comprar tableros, dibuja el "nesting" (acomodo) de todas tus piezas sobre las dimensiones estándar del tablero (ej. 244x122cm) para minimizar desperdicio. Un buen acomodo puede reducir el consumo de material entre un 10% y un 20% frente a un corte improvisado.</p>
+        </div>
+        <div class="card">
+          <h3>Tiempo de entrega y planificación <span class="card-time">10 min</span></h3>
+          <p>Registra el tiempo real que te toma cada etapa (corte, ensamble, acabado) en tus primeros proyectos. Con 3-4 proyectos similares registrados, podrás cotizar tiempos de entrega mucho más precisos a futuros clientes, evitando comprometerte a plazos poco realistas.</p>
+        </div>
+        <div class="card">
+          <h3>Errores comunes al costear <span class="card-time">10 min</span></h3>
+          <ul>
+            <li><strong>Olvidar el tiempo de diseño y cotización:</strong> también es trabajo y debe reflejarse en el precio.</li>
+            <li><strong>No incluir el desperdicio de material:</strong> el "nesting" nunca es 100% eficiente; considera un 10-15% adicional de material.</li>
+            <li><strong>Cobrar igual sin importar la complejidad:</strong> una cola de milano toma más tiempo que una unión con tornillos; el precio debe reflejar esa diferencia.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Checklist antes de cotizar un proyecto <span class="card-time">14 min</span></h3>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Lista de despiece completa y revisada</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Optimización de corte (nesting) realizada</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Horas estimadas por etapa (corte, ensamble, acabado)</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Herrajes y consumibles incluidos en el costo</div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div>Margen de ganancia definido</div>
+        </div>
+        <div class="card">
+          <h3>Ejemplo numérico completo de cotización <span class="card-time">12 min</span></h3>
+          <table class="tabla">
+            <tr><th>Concepto</th><th>Cálculo</th><th>Subtotal</th></tr>
+            <tr><td>Materiales (madera, herrajes, cola, lija, acabado)</td><td>-</td><td>$300.000</td></tr>
+            <tr><td>Mano de obra</td><td>12h × $15.000</td><td>$180.000</td></tr>
+            <tr><td>Desgaste de herramientas (5% del subtotal)</td><td>5% de $480.000</td><td>$24.000</td></tr>
+            <tr><td><strong>Costo total</strong></td><td>-</td><td><strong>$504.000</strong></td></tr>
+            <tr><td>Margen de ganancia (30%)</td><td>30% de $504.000</td><td>$151.200</td></tr>
+            <tr><td><strong>Precio de venta sugerido</strong></td><td>-</td><td><strong>$655.200</strong></td></tr>
+          </table>
+          <div class="tip">💡 Usa la calculadora de este módulo para replicar este cálculo con tus propios números de proyecto.</div>
+        </div>
+        <div class="card">
+          <h3>Márgenes de referencia según tipo de mueble <span class="card-time">8 min</span></h3>
+          <table class="tabla">
+            <tr><th>Tipo de proyecto</th><th>Margen orientativo</th></tr>
+            <tr><td>Piezas simples repetibles (repisas, cajas)</td><td>20-25%</td></tr>
+            <tr><td>Muebles con uniones de ebanistería (mesas, sillas)</td><td>30-35%</td></tr>
+            <tr><td>Piezas de encargo con diseño exclusivo</td><td>35-45%</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Glosario de negocio para el carpintero <span class="card-time">8 min</span></h3>
+          <ul>
+            <li><strong>Costo directo:</strong> gasto atribuible directamente a un proyecto (madera, herrajes, horas trabajadas en él).</li>
+            <li><strong>Costo indirecto/fijo:</strong> gastos del taller que no dependen de un proyecto específico (arriendo, servicios), prorrateados entre todos los proyectos del mes.</li>
+            <li><strong>Margen bruto:</strong> precio de venta menos costos directos, antes de restar costos fijos e impuestos.</li>
+            <li><strong>Punto de equilibrio:</strong> el número de proyectos o ventas necesarias para cubrir todos los costos fijos del mes.</li>
+          </ul>
+        </div>
+        <div id="quiz-m7"></div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div id="sec-calc" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num">Herramienta</div>
+        <div class="mod-title">Calculadora de <span style="color:var(--caramelo)">Precio de Proyecto</span></div>
+        <div class="mod-desc">Costea tu proyecto con materiales, mano de obra y margen.</div>
+      </div>
+      <div class="mod-body">
+        <div class="calc-box">
+          <div class="calc-row"><label>Costo de materiales ($)</label><input type="number" id="cp-mat" placeholder="150000"></div>
+          <div class="calc-row"><label>Horas de trabajo</label><input type="number" id="cp-horas" placeholder="8"></div>
+          <div class="calc-row"><label>Valor de tu hora ($)</label><input type="number" id="cp-hora-val" placeholder="15000"></div>
+          <div class="calc-row"><label>Margen de ganancia (%)</label><input type="number" id="cp-margen" placeholder="30"></div>
+          <button class="calc-btn" onclick="calcularPrecio()">Calcular Precio</button>
+          <div class="calc-result" id="cp-resultado"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTAS -->
+    <div id="sec-notas" class="modulo">
+      <div class="mod-hero">
+        <div class="mod-num">Tu espacio</div>
+        <div class="mod-title">Notas del <span style="color:var(--caramelo)">Taller</span></div>
+        <div class="mod-desc">Guarda listas de despiece, presupuestos o ideas de diseño.</div>
+      </div>
+      <div class="mod-body">
+        <textarea id="nota-input" rows="3" placeholder="Escribe una nota..."></textarea>
+        <button class="calc-btn" onclick="agregarNota()">Guardar Nota</button>
+        <div id="notas-lista" style="margin-top:16px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let modulosVisitados = new Set([0]);
+let quizzesRespondidos = {};
+let notasGuardadas = [];
+let favoritosSet = new Set();
+const TOTAL_MODULOS = 8; // indice + 7 modulos
+
+const quizzes = {
+  m1: [
+    {p:"¿Qué caracteriza a la unión de cola de milano?", ops:["Es débil pero rápida","Forma trapezoidal muy resistente a la tracción","Solo se usa en exteriores","No requiere cola"], correcta:1},
+    {p:"¿Qué proporción del grosor suele tener la caja en una unión espiga y caja?", ops:["Un décimo","Un tercio aproximadamente","Toda la pieza","No tiene relación"], correcta:1},
+    {p:"¿Para qué se recomienda empezar la práctica en ebanistería antes que la cola de milano?", ops:["Unión con tornillos","Unión a media madera","Enchapado","Ninguna, se empieza directo con cola de milano"], correcta:1},
+    {p:"¿Qué herramienta traza líneas paralelas a un borde con precisión constante?", ops:["El formón","El gramil","La escofina","El serrucho de costilla"], correcta:1}
+  ],
+  m2: [
+    {p:"¿Qué se debe usar en la sierra de mesa para cortes angostos?", ops:["Las manos directamente","Un empujador (push stick)","Nada especial","Guantes gruesos"], correcta:1},
+    {p:"¿Para qué se usa principalmente el router/fresadora?", ops:["Cortes rectos largos","Molduras, rebajes y plantillas","Lijar superficies","Medir ángulos"], correcta:1},
+    {p:"¿Qué máquina es ideal para dejar una cara de la tabla perfectamente plana?", ops:["Sierra de cinta","Cepilladora/jointer","Router","Sierra circular"], correcta:1},
+    {p:"¿Por qué la sierra de cinta es considerada más segura que la sierra de mesa?", ops:["No corta madera dura","Tiene bajo riesgo de retroceso (kickback)","No requiere mantenimiento","Es más lenta"], correcta:1}
+  ],
+  m3: [
+    {p:"¿Qué muestra la 'cota' en un plano técnico?", ops:["El color de la madera","La medida exacta de un elemento","El nombre del cliente","El tipo de cola a usar"], correcta:1},
+    {p:"¿Para qué sirve la lista de despiece?", ops:["Decorar el taller","Organizar piezas y optimizar el tablero","Reemplazar el plano","No tiene utilidad práctica"], correcta:1},
+    {p:"¿Qué indica la 'tolerancia' en un plano técnico?", ops:["El tipo de madera","El margen de error aceptable en una medida","El precio del material","El color del acabado"], correcta:1},
+    {p:"¿Cuándo conviene revisar el control de calidad de una pieza cortada?", ops:["Después de ensamblar todo el mueble","Antes de ensamblar, comparando contra la lista de despiece","Nunca es necesario","Solo al final del proyecto"], correcta:1}
+  ],
+  m4: [
+    {p:"¿Por qué el fondo de un cajón debe 'flotar' en una ranura?", ops:["Por estética","Para permitir el movimiento natural de la madera","Es más barato","No es necesario"], correcta:1},
+    {p:"¿Qué holgura se recomienda entre puerta y marco?", ops:["0mm, deben quedar exactas","2-3mm","20mm","No importa"], correcta:1},
+    {p:"¿Qué tipo de guía es recomendable para muebles de uso frecuente como cocinas?", ops:["Corredera de madera simple","Guía de cierre suave (soft-close)","Ninguna guía","Solo tornillos"], correcta:1},
+    {p:"¿Qué diámetro de perforación es común para bisagras ocultas tipo copa?", ops:["10mm","35mm","100mm","No requiere perforación"], correcta:1}
+  ],
+  m5: [
+    {p:"¿Por qué se recomienda enchapar ambas caras de un tablero?", ops:["Para ahorrar chapa","Para evitar que el tablero se alabee","No es necesario, solo una cara","Para que pese menos"], correcta:1},
+    {p:"¿Qué grosor aproximado tiene una chapa de madera típica?", ops:["5cm","0.5-0.6mm","10mm","2cm"], correcta:1},
+    {p:"¿Qué es la técnica 'bookmatch' en enchapado?", ops:["Cortar chapa en cuadrados","Unir dos láminas en espejo del mismo tronco","Pintar la chapa","Barnizar sin lijar"], correcta:1},
+    {p:"¿Qué grado de contrachapado es ideal para piezas donde se ven ambas caras?", ops:["B/C","A/A","C/D","No existe diferencia de grados"], correcta:1}
+  ],
+  m6: [
+    {p:"¿Qué se recomienda hacer antes de aplicar un tinte al proyecto final?", ops:["Aplicarlo directo sin pruebas","Probarlo en un recorte de la misma madera","Diluirlo al doble siempre","No es necesario probar"], correcta:1},
+    {p:"En acabados, ¿qué estrategia da mejor resultado?", ops:["Una capa gruesa","Varias capas finas","No lijar entre capas","Aplicar sin ventilación"], correcta:1},
+    {p:"¿Cuál es una ventaja de la laca nitrocelulósica frente al barniz poliuretano?", ops:["Mayor resistencia al agua","Secado mucho más rápido entre manos","No requiere ventilación","Se aplica sin pistola"], correcta:1},
+    {p:"¿Qué producto ayuda a uniformizar la absorción de tinte en maderas de veta variable como el pino?", ops:["Cera pura","Sellador condicionador","Agua simple","Ningún producto ayuda"], correcta:1}
+  ],
+  m7: [
+    {p:"¿Cuáles son los componentes principales del costo de un proyecto?", ops:["Solo materiales","Materiales, mano de obra, desgaste de herramientas y margen","Solo mano de obra","Solo el margen de ganancia"], correcta:1},
+    {p:"¿Qué busca optimizar el 'nesting' o acomodo de piezas?", ops:["El color del mueble","Minimizar el desperdicio de tablero","La velocidad de corte","El tipo de cola"], correcta:1},
+    {p:"¿Por qué es un error común no incluir el tiempo de diseño en el precio?", ops:["Porque no es trabajo real","Porque también consume tiempo y debe reflejarse en el precio","Porque siempre es gratuito","No es un error"], correcta:1},
+    {p:"¿Qué porcentaje adicional de material se recomienda considerar por desperdicio de corte?", ops:["0%","10-15%","50%","100%"], correcta:1}
+  ]
+};
+
+function iniciarCurso(){
+  document.getElementById('splash').classList.add('hide');
+  document.getElementById('app').classList.add('visible');
+  cargarEstado();
+  renderQuizzes();
+  actualizarProgreso();
+}
+
+function renderQuizzes(){
+  Object.keys(quizzes).forEach(k=>{
+    const container = document.getElementById('quiz-'+k);
+    if(!container) return;
+    const q = quizzes[k];
+    let html = '<h3 style="font-family:Oswald,sans-serif;color:var(--caramelo);margin-bottom:10px;">📋 Pon a prueba lo aprendido</h3>';
+    q.forEach((quiz,qi)=>{
+      html += `<div class="quiz-wrap" id="qw-${k}-${qi}">
+        <div class="quiz-pregunta">${qi+1}. ${quiz.p}</div>
+        <div class="quiz-opciones">
+          ${quiz.ops.map((op,oi)=>`<button class="quiz-opt" onclick="responderQuiz('${k}',${qi},${oi})">${op}</button>`).join('')}
+        </div>
+        <div class="quiz-feedback" id="qf-${k}-${qi}"></div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  });
+  Object.keys(quizzesRespondidos).forEach(id=>{
+    const [k,qi] = id.split('-');
+    const oi = quizzesRespondidos[id];
+    const q = quizzes[k] && quizzes[k][qi];
+    if(!q) return;
+    const wrap = document.getElementById('qw-'+k+'-'+qi);
+    if(!wrap) return;
+    const opts = wrap.querySelectorAll('.quiz-opt');
+    opts.forEach((o,i)=>{
+      if(i===q.correcta) o.classList.add('correcta');
+      if(i===Number(oi) && i!==q.correcta) o.classList.add('incorrecta');
+    });
+    const fb = document.getElementById('qf-'+k+'-'+qi);
+    fb.classList.add('show', Number(oi)===q.correcta ? 'ok':'fail');
+    fb.textContent = Number(oi)===q.correcta ? '¡Correcto!' : 'Incorrecto. La respuesta correcta está resaltada.';
+  });
+}
+
+function responderQuiz(k, qi, oi){
+  const id = k+'-'+qi;
+  if(quizzesRespondidos[id] !== undefined) return;
+  quizzesRespondidos[id] = oi;
+  const q = quizzes[k][qi];
+  const wrap = document.getElementById('qw-'+k+'-'+qi);
+  const opts = wrap.querySelectorAll('.quiz-opt');
+  opts.forEach((o,i)=>{
+    if(i===q.correcta) o.classList.add('correcta');
+    if(i===oi && i!==q.correcta) o.classList.add('incorrecta');
+  });
+  const fb = document.getElementById('qf-'+k+'-'+qi);
+  fb.classList.add('show', oi===q.correcta ? 'ok':'fail');
+  fb.textContent = oi===q.correcta ? '¡Correcto!' : 'Incorrecto. La respuesta correcta está resaltada.';
+  guardarEstado();
+  actualizarProgreso();
+}
+
+function toggleCheck(item){
+  item.classList.toggle('checked');
+}
+
+function irModulo(n){
+  document.querySelectorAll('.modulo').forEach(m=>m.classList.remove('active'));
+  const ids = ['sec-indice','modulo-1','modulo-2','modulo-3','modulo-4','modulo-5','modulo-6','modulo-7'];
+  document.getElementById(ids[n]).classList.add('active');
+  document.querySelectorAll('.nav-mod-btn').forEach((b,i)=>b.classList.toggle('active', i===n));
+  modulosVisitados.add(n);
+  guardarEstado();
+  actualizarProgreso();
+  window.scrollTo(0,0);
+}
+
+function irVista(vista){
+  document.querySelectorAll('.modulo').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.nav-mod-btn').forEach(b=>b.classList.remove('active'));
+  if(vista==='notas'){ document.getElementById('sec-notas').classList.add('active'); renderizarNotas(); }
+  if(vista==='calc'){ document.getElementById('sec-calc').classList.add('active'); }
+  window.scrollTo(0,0);
+}
+
+function actualizarProgreso(){
+  const pct = Math.round((modulosVisitados.size / TOTAL_MODULOS) * 100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = pct+'%';
+  if (typeof CertificadoModule !== 'undefined') CertificadoModule.autoGenerarSiCompleto('intermedio', pct);
+}
+
+function calcularPrecio(){
+  const mat = parseFloat(document.getElementById('cp-mat').value)||0;
+  const horas = parseFloat(document.getElementById('cp-horas').value)||0;
+  const valorHora = parseFloat(document.getElementById('cp-hora-val').value)||0;
+  const margen = parseFloat(document.getElementById('cp-margen').value)||0;
+  const manoObra = horas*valorHora;
+  const costoTotal = mat + manoObra;
+  const precioFinal = costoTotal * (1 + margen/100);
+  document.getElementById('cp-resultado').textContent =
+    `Costo total: $${costoTotal.toLocaleString()} | Precio de venta sugerido: $${Math.round(precioFinal).toLocaleString()}`;
+}
+
+function toggleFavorito(id){
+  if(favoritosSet.has(id)) favoritosSet.delete(id); else favoritosSet.add(id);
+  const btn = document.getElementById('fav-'+id);
+  if(btn) btn.textContent = favoritosSet.has(id) ? '★' : '☆';
+  guardarEstado();
+}
+
+function toggleBusqueda(){
+  document.getElementById('search-bar').classList.toggle('show');
+}
+function limpiarBusqueda(){
+  document.getElementById('search-input').value='';
+  document.getElementById('search-bar').classList.remove('show');
+}
+
+function agregarNota(){
+  const val = document.getElementById('nota-input').value.trim();
+  if(!val) return;
+  notasGuardadas.push({texto:val, fecha:new Date().toLocaleDateString()});
+  document.getElementById('nota-input').value='';
+  guardarEstado();
+  renderizarNotas();
+  showToast('Nota guardada');
+}
+function renderizarNotas(){
+  const cont = document.getElementById('notas-lista');
+  if(notasGuardadas.length===0){ cont.innerHTML='<p style="color:var(--gris);font-size:13px;">Aún no tienes notas.</p>'; return; }
+  cont.innerHTML = notasGuardadas.map((n,i)=>`
+    <div class="note-item">
+      <button class="note-del" onclick="borrarNota(${i})">✕</button>
+      <div>${n.texto}</div>
+      <div style="color:var(--gris);font-size:11px;margin-top:4px;">${n.fecha}</div>
+    </div>`).join('');
+}
+function borrarNota(i){
+  notasGuardadas.splice(i,1);
+  guardarEstado();
+  renderizarNotas();
+}
+
+function mostrarLogros(){
+  const total = Object.keys(quizzesRespondidos).length;
+  const correctas = Object.keys(quizzesRespondidos).filter(id=>{
+    const [k,qi]=id.split('-');
+    return quizzes[k][qi].correcta === quizzesRespondidos[id];
+  }).length;
+  alert(`Progreso de logros:\n\n⚙️ Módulos visitados: ${modulosVisitados.size-1}/7\n📋 Preguntas respondidas: ${total}/28\n✅ Respuestas correctas: ${correctas}\n⭐ Favoritos guardados: ${favoritosSet.size}\n📝 Notas guardadas: ${notasGuardadas.length}`);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function guardarEstado(){
+  try{
+    localStorage.setItem('carpintermedio_visitados', JSON.stringify([...modulosVisitados]));
+    localStorage.setItem('carpintermedio_quizzes', JSON.stringify(quizzesRespondidos));
+    localStorage.setItem('carpintermedio_notas', JSON.stringify(notasGuardadas));
+    localStorage.setItem('carpintermedio_favoritos', JSON.stringify([...favoritosSet]));
+  }catch(e){ console.warn('localStorage no disponible'); }
+}
+function cargarEstado(){
+  try{
+    const v = JSON.parse(localStorage.getItem('carpintermedio_visitados') || '[0]');
+    modulosVisitados = new Set(v);
+    quizzesRespondidos = JSON.parse(localStorage.getItem('carpintermedio_quizzes') || '{}');
+    notasGuardadas = JSON.parse(localStorage.getItem('carpintermedio_notas') || '[]');
+    favoritosSet = new Set(JSON.parse(localStorage.getItem('carpintermedio_favoritos') || '[]'));
+    favoritosSet.forEach(id=>{
+      const btn = document.getElementById('fav-'+id);
+      if(btn) btn.textContent = '★';
+    });
+  }catch(e){ console.warn('No se pudo cargar el estado'); }
+}
+</script>
+</body>
+</html>
